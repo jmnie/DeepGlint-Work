@@ -1,0 +1,188 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{graphicx, fullpage, hyperref, listings}
+\usepackage{appendix, pdfpages, color}
+\usepackage{indentfirst} %段首空两格 棒
+\usepackage{chngpage} 
+\usepackage{tocloft}            % This squashes the Table of Contents a bit
+\usepackage{pdfpages}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{framed}
+\usepackage[UTF8]{ctex}
+\usepackage{array}%需要该宏包
+
+
+
+\setlength\cftbeforesecskip{3pt}
+\renewcommand{\contentsname}{\centerline{\textbf{Content}}}
+\graphicspath{{images/}}
+
+\usepackage{multicol}
+
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\hypersetup{CJKbookmarks,%
+	bookmarksnumbered,%
+	colorlinks,%
+	linkcolor=black,%
+	citecolor=black,%
+	plainpages=false,%
+	pdfstartview=FitH}
+
+%%%%%%%代码语法高亮设置
+
+\usepackage{color}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\usepackage{listings}
+\lstset{
+	language=Java,
+	showspaces=false,
+	showtabs=false,
+	%%%%%
+	frame = single,
+	stepnumber = 2,  
+	numbersep = 4pt, 
+	 numbers=left,
+	%breakatwhitespace=false, 
+	tabsize=2,  
+	%%%%%
+	breaklines=true,
+	showstringspaces=false,
+    breakatwhitespace=false, 
+	commentstyle=\color{pgreen},
+	keywordstyle=\color{pblue},
+	stringstyle=\color{pred},
+	basicstyle=\ttfamily,
+	%moredelim=[il][\textcolor{pgrey}]{$$},
+	%moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%},
+}
+
+
+%%%%%%%%代码语法高亮设置
+
+\definecolor{MyLightYellow}{cmyk}{0,0.,0.2,0} 
+
+\setlength{\parskip}{4pt}        % sets spacing between paragraphs
+\interfootnotelinepenalty=500    % this prevents footnotes breaking across pages
+
+\title{\includegraphics[width=0.45\textwidth]{dg}
+        \\Future Work Plan Commencing From May 16 \\ 面部表情识别的工作计划 }          % <<<<<<<<< change the title as appropriate
+\author{Jiaming Nie}                    % <<<<<<<<< module code
+
+\begin{document}
+\begin{titlepage}
+	
+%\date{\today}
+\maketitle
+\addtocontents{toc}{\protect\thispagestyle{empty}} % because we don't want a page number on the title page
+% Thanks to Huang Shanyue for suggesting this 
+
+
+
+
+%\date{\today}
+\thispagestyle{empty}  %去除首页页码
+
+\end{titlepage}
+
+%\tableofcontents
+%\listoffigures
+
+\newpage
+
+\section{使用不同的网络训练}
+
+\subsection{fer2013数据集}
+Fer2013的数据集中共有7种表情，训练集共有28710个样本，测试集有3590个样本，验证集共有3590个样本。
+
+计划使用的网络模型: vgg16, vgg19, ResNet. 
+\subsubsection{详细时间表}
+
+\begin{table}[htbp] 
+	\begin{center}
+		\caption{具体时间表}
+		\begin{tabular}{|l|p{320pt}|} \hline
+		May 16, 周三 & 熟悉DGNet的基本操作,模型搭建 \\ \hline
+		May 17, 周四 & 在DGNet上对fer2013进行训练(也可以周三进行) \\ \hline
+		May 18,周五 & 总结并继续EmotionNet论文的阅读 \\ \hline
+		\end{tabular}
+		\label{tab:timetable}
+	\end{center}
+\end{table}	
+
+\subsection{AffectNet数据集}
+
+AffectNet数据集还在申请中，尚未得到回复。预计下周可能可以获取数据。初步的计划与对fer2013相同，用三种不同的网络对AffectNet数据集进行训练。
+
+如果5月21日或之前能拿到数据，具体的时间规划表如下:
+
+\subsubsection{训练的时间表}
+
+\begin{table}[htbp] 
+	\begin{center}
+		\caption{具体时间表}
+		\begin{tabular}{|l|p{320pt}|} \hline
+			May 21 - May 22, 周一 - 周二 & 熟悉并了解AffectNet数据集,看数据类型是可以直接提取还是需要切割人脸 \\ \hline
+			May 23 - 24, 周三 - 周四 & 微调已有的模型,进行训练 \\ \hline
+			May 25, 周五 & 继续阅读EmotionNet论文，深入理解 \\ \hline
+		\end{tabular}
+		\label{tab:table-2}
+	\end{center}
+\end{table}	
+
+
+\section{EmotionNet算法的实现}
+
+EmotionNet通过对人脸提取特特征点,进一步处理提取特征值来进行对不同人脸进行分类(基于贝叶斯方法)。提取脸部特征点需要其他paper中所实现的特定函数。
+
+实现过程计划为两种:
+
+\begin{itemize}
+\item[1.] 提取特征向量后使用不同的CNN深度模型进行训练，获得准确率
+\item[2.] 复现论文中的方法，进行训练，获取准确率
+\end{itemize}
+
+\subsubsection{时间表}
+
+\begin{table}[htbp] 
+	\begin{center}
+		\caption{EmotionNet算法}
+		\begin{tabular}{|l|p{320pt}|} \hline
+			May 28 - May 30, 周一 - 周三 & 对Fer2013数据集进行人脸特征点提取以及特征向量的制作\\ \hline
+			May 31 - June 1, 周四-周五 & 理解论文中所使用的贝叶斯模型并进行训练  \\ \hline
+			6.1 之后的下一周 & 对AffectNet的数据集进行特征点提取，重复fer2013的做法 \\ \hline
+		\end{tabular}
+		\label{tab:table-3}
+	\end{center}
+\end{table}	
+
+备注:如果AffectNet的数据集不能顺利收集，考虑提前进行EmotionNet算法对fer2013数据集的复现以及其他数据集的验证。
+%\subsection{对于fer2013 数据集}
+
+%\subsection{对于AffectNet数据集}
+
+
+
+
+
+\bibliographystyle{IEEEtran}  
+%\bibliography{MyRefs} 
+%\addcontentsline{toc}{section}{References}
+
+
+
+
+
+%-------------------------------------------------------------------------------------------------------
+
+
+
+
+
+\end{document}
