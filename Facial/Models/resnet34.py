@@ -2,9 +2,8 @@ import torch
 from torchvision import models
 from torch import nn
 
-
-def vgg16_fine_tune():
-    model_ft = models.vgg16(pretrained=True)
+def resnet34_fine_tune():
+    model_ft = models.resnet34(pretrained=True)
 
     for param in model_ft.parameters():
         param.requires_grad = False
