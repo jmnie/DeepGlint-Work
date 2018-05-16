@@ -1,0 +1,126 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{graphicx, fullpage, hyperref, listings}
+\usepackage{appendix, pdfpages, color}
+\usepackage{indentfirst} %段首空两格 棒
+\usepackage{chngpage} 
+\usepackage{tocloft}            % This squashes the Table of Contents a bit
+\usepackage{pdfpages}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{framed}
+\usepackage[UTF8]{ctex}
+\usepackage{array}%需要该宏包
+
+
+\setlength\cftbeforesecskip{3pt}
+\renewcommand{\contentsname}{\centerline{\textbf{Content}}}
+\graphicspath{{images/}}
+
+\usepackage{multicol}
+
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\hypersetup{CJKbookmarks,%
+	bookmarksnumbered,%
+	colorlinks,%
+	linkcolor=black,%
+	citecolor=black,%
+	plainpages=false,%
+	pdfstartview=FitH}
+
+%%%%%%%代码语法高亮设置
+
+\usepackage{color}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\usepackage{listings}
+\lstset{
+	language=Java,
+	showspaces=false,
+	showtabs=false,
+	%%%%%
+	frame = single,
+	stepnumber = 2,  
+	numbersep = 4pt, 
+	 numbers=left,
+	%breakatwhitespace=false, 
+	tabsize=2,  
+	%%%%%
+	breaklines=true,
+	showstringspaces=false,
+    breakatwhitespace=false, 
+	commentstyle=\color{pgreen},
+	keywordstyle=\color{pblue},
+	stringstyle=\color{pred},
+	basicstyle=\ttfamily,
+	%moredelim=[il][\textcolor{pgrey}]{$$},
+	%moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%},
+}
+
+
+%%%%%%%%代码语法高亮设置
+
+\definecolor{MyLightYellow}{cmyk}{0,0.,0.2,0} 
+
+\setlength{\parskip}{4pt}        % sets spacing between paragraphs
+\interfootnotelinepenalty=500    % this prevents footnotes breaking across pages
+
+\title{\includegraphics[width=0.45\textwidth]{dg}
+        \\Work Log May 15 \\ 5月15日工作日志 }          % <<<<<<<<< change the title as appropriate
+\author{Jiaming Nie}                    % <<<<<<<<< module code
+
+\begin{document}
+\begin{titlepage}
+	
+%\date{\today}
+\maketitle
+\addtocontents{toc}{\protect\thispagestyle{empty}} % because we don't want a page number on the title page
+% Thanks to Huang Shanyue for suggesting this 
+
+
+
+
+%\date{\today}
+\thispagestyle{empty}  %去除首页页码
+
+\end{titlepage}
+
+%\tableofcontents
+%\listoffigures
+
+%\newpage
+
+
+
+%\tableofcontents
+
+%\listoffigures
+%\listoftables
+%\lstlistoflistings        
+
+
+%\newpage
+
+
+
+
+\bibliographystyle{IEEEtran}  
+%\bibliography{MyRefs} 
+%\addcontentsline{toc}{section}{References}
+
+
+
+
+
+%-------------------------------------------------------------------------------------------------------
+
+
+
+
+
+\end{document}
