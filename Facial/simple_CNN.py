@@ -5,6 +5,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import time 
 from sklearn import metrics
+from Models.LoadData import ReadData_fer
 
 ## Read Train Data
 def ReadData(path):
@@ -38,6 +39,7 @@ def ReadData(path):
 
     return x_data, y_label
 
+
 def oneHot(y_):
     # Function to encode output labels from number indexes 
     # e.g.: [[5], [0], [3]] --> [[0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0]]
@@ -45,12 +47,55 @@ def oneHot(y_):
     n_values = int(np.max(y_)) + 1
     return np.eye(n_values)[np.array(y_, dtype=np.int32)]  # Returns FLOATS
 
-train_path = "C:\\Users\\Jiaming Nie\\Documents\\Work-DeepGlint\Facial\datasets\\train.csv"
-test_path = "C:\\Users\Jiaming Nie\Documents\Work-DeepGlint\Facial\datasets\\test.csv"
-x_train, y_train = ReadData(train_path)
-x_test, y_test = ReadData(test_path)
-x_train = x_train.reshape(len(x_train), 48, 48, 1)
-x_test = x_test.reshape(len(x_test), 48, 48, 1)
+def zca_whitening(X):
+    """
+        Function to compute ZCA whitening matrix (aka Mahalanobis whitening).
+        INPUT:  X: [M x N] matrix.
+            Rows: Variables
+            Columns: Observations
+        OUTPUT: ZCAMatrix: [M x M] matrix
+        """
+    mean_ = np.mean(X)
+    X = X - mean_
+    # Covariance matrix [column-wise variables]: Sigma = (X-mu)' * (X-mu) / N
+    sigma = np.cov(X, rowvar=True)  # [M x M]
+    # Singular Value Decomposition. X = U * np.diag(S) * V
+    U, S, V = np.linalg.svd(sigma)
+    # U: [M x M] eigenvectors of sigma.
+    # S: [M x 1] eigenvalues of sigma.
+    # V: [M x M] transpose of U
+    # Whitening constant: prevents division by zero
+    epsilon = 0.1
+    # ZCA Whitening matrix: U * Lambda * U'
+    ZCAMatrix = np.dot(U, np.dot(np.diag(1.0 / np.sqrt(S + epsilon)), U.T))  # [M x M]
+    return ZCAMatrix
+
+def normalization(x_):
+
+    length = len(x_)
+
+    for i in range(length):
+        x_[i] = zca_whitening(x_[i])
+
+    return x_
+#train_path = "C:\\Users\\Jiaming Nie\\Documents\\Work-DeepGlint\Facial\datasets\\train.csv"
+#test_path = "C:\\Users\Jiaming Nie\Documents\Work-DeepGlint\Facial\datasets\\test.csv"
+#x_train, y_train = ReadData(train_path)
+#x_test, y_test = ReadData(test_path)
+#x_train = x_train.reshape(len(x_train), 48, 48, 1)
+#x_test = x_test.reshape(len(x_test), 48, 48, 1)
+
+x_train,y_train,x_test,y_test,x_vali,y_vali = ReadData_fer()
+
+# Normalization
+x_train = normalization(x_train)
+x_test = normalization(x_test)
+x_vali = normalization(x_vali)
+
+x_train = x_train.reshape((len(x_train), 48, 48, 1))
+x_test = x_test.reshape((len(x_test), 48, 48, 1))
+x_vali = x_vali.reshape((len(x_vali),48,48,1))
+
 
 print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
 print(y_train)
@@ -101,7 +146,7 @@ history = classifier.fit(x_train, oneHot(y_train),
            batch_size=batch_size, 
            epochs=epochs, 
            verbose=1, 
-           validation_data=(x_test, oneHot(y_test))) 
+           validation_data=(x_vali, oneHot(y_vali)))
 
 average_time_per_epoch = (time.time() - start_time) / epochs
 results.append((history, average_time_per_epoch))
@@ -129,7 +174,7 @@ ax2.legend()
 ax3.bar(np.arange(len(results)), [x[1] for x in results],
          align='center')
 plt.tight_layout()
-#plt.show()
+plt.show()
 
 score = classifier.evaluate(x_test, oneHot(y_test), verbose=0) 
 print('Test loss:', score[0]) 
@@ -138,47 +183,45 @@ print('Test accuracy:', score[1])
 # Results
 
 #score = model.evaluate(x_test, one_hot(y_test), verbose=0)
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
 
 predictions_one_hot = classifier.predict(x_test)
 predictions = predictions_one_hot.argmax(1)
 
 # print("Testing Accuracy: {}%".format(100*accuracy))
 
-print("")
-print("Accuracy: {}%".format(100*metrics.accuracy_score(y_test, predictions)))
-print("Recall: {}%".format(100*metrics.recall_score(y_test, predictions, average="weighted")))
-print("f1_score: {}%".format(100*metrics.f1_score(y_test, predictions, average="weighted")))
-
-print("")
-print("Confusion Matrix:")
-confusion_matrix = metrics.confusion_matrix(y_test, predictions)
-# confusion_matrix = metrics.confusion_matrix(one_hot(y_test), predictions_one_hot)
-print(confusion_matrix)
-normalised_confusion_matrix = np.array(confusion_matrix, dtype=np.float32)/np.sum(confusion_matrix)*100
-
-print("")
-print("Confusion matrix (normalised to % of total test data):")
-print(normalised_confusion_matrix)
-print("Note: training and testing data is not equally distributed amongst classes, ")
-print("so it is normal that more than a 6th of the data is correctly classifier in the last category.")
-
-# Plot Results: 
-width = 6
-height = 6
-plt.figure(figsize=(width, height))
-plt.imshow(
-    normalised_confusion_matrix, 
-    interpolation='nearest', 
-    cmap=plt.cm.rainbow
-)
-plt.title("Confusion matrix \n(normalised to % of total test data)")
-plt.colorbar()
-tick_marks = np.arange(num_output)
-plt.xticks(tick_marks, LABELS, rotation=90)
-plt.yticks(tick_marks, LABELS)
-plt.tight_layout()
-plt.ylabel('True label')
-plt.xlabel('Predicted label')
-plt.show()
+# print("")
+# print("Accuracy: {}%".format(100*metrics.accuracy_score(y_test, predictions)))
+# print("Recall: {}%".format(100*metrics.recall_score(y_test, predictions, average="weighted")))
+# print("f1_score: {}%".format(100*metrics.f1_score(y_test, predictions, average="weighted")))
+#
+# print("")
+# print("Confusion Matrix:")
+# confusion_matrix = metrics.confusion_matrix(y_test, predictions)
+# # confusion_matrix = metrics.confusion_matrix(one_hot(y_test), predictions_one_hot)
+# print(confusion_matrix)
+# normalised_confusion_matrix = np.array(confusion_matrix, dtype=np.float32)/np.sum(confusion_matrix)*100
+#
+# print("")
+# print("Confusion matrix (normalised to % of total test data):")
+# print(normalised_confusion_matrix)
+# print("Note: training and testing data is not equally distributed amongst classes, ")
+# print("so it is normal that more than a 6th of the data is correctly classifier in the last category.")
+#
+# # Plot Results:
+# width = 6
+# height = 6
+# plt.figure(figsize=(width, height))
+# plt.imshow(
+#     normalised_confusion_matrix,
+#     interpolation='nearest',
+#     cmap=plt.cm.rainbow
+# )
+# plt.title("Confusion matrix \n(normalised to % of total test data)")
+# plt.colorbar()
+# tick_marks = np.arange(num_output)
+# plt.xticks(tick_marks, LABELS, rotation=90)
+# plt.yticks(tick_marks, LABELS)
+# plt.tight_layout()
+# plt.ylabel('True label')
+# plt.xlabel('Predicted label')
+# plt.show()
