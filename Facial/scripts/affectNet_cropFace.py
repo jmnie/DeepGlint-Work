@@ -5,7 +5,7 @@ import os
 
 csv1_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
 csv2_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\validation.csv"
-dataset_path = "C:\\Users\Datasets\AffectNet\Manually_Annotated_Images"
+dataset_path = "F:\AffectNet\Manually_Annotated_Images"
 crop_path = "F:\AffectNet\crop_image"
 
 #file_1_dict = read_csv(csv1_path)
