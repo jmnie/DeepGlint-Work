@@ -10,13 +10,14 @@ LABELS = ["Neutral","Happiness","Sadness","Suprise","Fear","Disgust","Anger","Co
 
 train_csv = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
 class dict_object:
-    def __init__(self,co_1,co_2,co_3,co_4,co_5,co_6):
+    def __init__(self,co_1,co_2,co_3,co_4,co_5,co_6,co_7):
         self.co_1 = co_1
         self.co_2 = co_2
         self.co_3 = co_3
         self.co_4 = co_4
         self.co_5 = co_5
         self.co_6 = co_6
+        self.co_7 = co_7
 
     def printself(self):
         print(self.co_1,self.co_2,self.co_3,self.co_4,self.co_5,self.co_6)
@@ -24,11 +25,15 @@ class dict_object:
     def getLabel(self):
         return self.co_6
 
+    def getFileName(self):
+        return self.co_7
+
+
 def read_csv(train_path):
     #train_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
     file_object = open(train_path)
 
-    file_dict = dict()
+    #file_dict = dict()
 
     csvReader = csv.reader(file_object)
     header = next(csvReader)
@@ -63,9 +68,19 @@ def read_csv(train_path):
     def getNewDir(text):
         search = '/'
         start = 0
+        index = text.find(search,start)
+        #print("Dir: ",str(text)[:index])
+        return int(str(text)[:index])
+
+    def getFileName(text):
+        search = '/'
+        start = 0
         index = text.find(search,start) + 1
         #print("index: ",index)
         return str(text)[index:]
+
+    i = 0
+    file_dict = dict()
 
     for row in csvReader:
         filedir = getNewDir(row[filename])
@@ -75,12 +90,12 @@ def read_csv(train_path):
         _height = int(row[face_height])
         landmark = getLandMark(row[facial_landmarks])
         label = int(row[expression])
+        file_name = getFileName(row[filename])
+        temp_value = [_x,_y,_width,_height,landmark,label,filedir]
+        file_dict[file_name] = temp_value
+        #print("i :",i,filedir)
 
-        if len(landmark) == 68:
-            if label not in useless_label:
-                temp_dict_object = dict_object(_x,_y,_width,_height,landmark,label)
-                file_dict[filedir] = temp_dict_object
-
+    #print("Iteration :",i)
     return file_dict
 
 ## Read File Path
@@ -89,6 +104,7 @@ def file_path(path):
 
     print(path)
     main_dir = os.listdir(path)
+    file_path_dict = dict()
 
     for subdir in main_dir:
 
@@ -99,8 +115,10 @@ def file_path(path):
         for subsubdir in sub_dirs:
             sub_filepath = os.path.join(filepath,subsubdir)
             #print(sub_filepath,subsubdir)
-            print(subsubdir) #subsubdir is the name of the file
+            #print(subdir,subsubdir) #subsubdir is the name of the file
+            file_path_dict[subsubdir] = [subdir,sub_filepath]
 
+    return file_path_dict
 
 def copy_file(destination_path):
     #destination_path = "C:\\Users\Datasets\AffectNet\images"
@@ -124,12 +142,14 @@ def copy_file(destination_path):
 #copy_file()
 
 ## Train file dict:
-train_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
-vali_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\validation.csv"
-train_file_dict = read_csv(train_path)
-vali_file_dict = read_csv(vali_path)
+#train_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
+#vali_path = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\validation.csv"
+#train_file_dict = read_csv(train_path)
+#vali_file_dict = read_csv(vali_path)
 
-print("Train Useful (68 Landmarks) + Not 6 Basic Emotions:",len(train_file_dict.keys()))
-print("Vali Useful (68 Landmarks) + Not 6 Basic Emotions :",len(vali_file_dict.keys()))
-print("Total :",len(train_file_dict.keys()) + len(vali_file_dict.keys()))
+#print("Train Useful (68 Landmarks) + Not 6 Basic Emotions:",len(train_file_dict.keys()))
+#print("Vali Useful (68 Landmarks) + Not 6 Basic Emotions :",len(vali_file_dict.keys()))
+#print("Total :",len(train_file_dict.keys()) + len(vali_file_dict.keys()))
 
+#dataset_path = "C:\\Users\Datasets\AffectNet\Manually_Annotated_Images"
+#file_path(dataset_path)
