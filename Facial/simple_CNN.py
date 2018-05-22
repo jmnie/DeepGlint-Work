@@ -87,7 +87,7 @@ def normalization(x_):
 
 x_train,y_train,x_test,y_test,x_vali,y_vali = ReadData_fer()
 
-# Normalization
+# # Normalization
 x_train = normalization(x_train)
 x_test = normalization(x_test)
 x_vali = normalization(x_vali)

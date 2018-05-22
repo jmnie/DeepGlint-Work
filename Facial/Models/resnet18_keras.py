@@ -3,9 +3,9 @@ from keras.models import Model
 from keras.layers import Input, Dense, Dropout, BatchNormalization, Conv2D, MaxPooling2D, AveragePooling2D, concatenate, \
     Activation, ZeroPadding2D
 from keras.layers import add, Flatten
-from keras.utils import plot_model
+#from keras.utils import plot_model
 from keras.metrics import top_k_categorical_accuracy
-from keras.preprocessing.image import ImageDataGenerator
+#from keras.preprocessing.image import ImageDataGenerator
 from keras.models import load_model
 from keras.utils import to_categorical
 import os
