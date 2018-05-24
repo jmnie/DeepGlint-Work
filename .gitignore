@@ -1,5 +1,12 @@
 
 /Facial/datasets
+/Facial/.idea
+/Facial/.vscode
+/Facial/Models/__pycache__
+/venv
+/.vscode
+/.idea
+
 
 *.aux
 *.out
@@ -11,3 +18,4 @@
 *.bib
 *.json
 *.iml
+

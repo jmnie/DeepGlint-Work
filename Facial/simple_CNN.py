@@ -107,7 +107,7 @@ LABELS = ['Anger', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
 
 # Importing the Keras libraries and packages
 from keras.models import Sequential
-from keras.layers import Convolution2D
+from keras.layers import Convolution2D,Conv2D
 from keras.layers import MaxPooling2D
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.optimizers import *
@@ -117,75 +117,125 @@ epochs=20
 num_class = 7
 num_output = 7
 # Initialising the CNN
-classifier = Sequential()
+model = Sequential()
 
-# Step 1 - Convolution
-classifier.add(Convolution2D(32, 3, 3, border_mode='same',input_shape = (48, 48, 1), activation = 'relu'))
+model = Sequential()
+#model.add(Convolution2D(32, 3, 3, border_mode='same', activation='relu',#input_shape=(48,48,1)))
+model.add(Conv2D(32, (3, 3), padding="same", activation="relu", input_shape=(48, 48, 1)))
 
-# Step 2 - Pooling
-classifier.add(MaxPooling2D(pool_size = (5, 5)))
-#classifier.add(Dropout(0.25))
-# Adding a second convolutional layer
-classifier.add(Convolution2D(32, 3, 3, activation = 'relu'))
-classifier.add(MaxPooling2D(pool_size = (5, 5)))
-#classifier.add(Dropout(0.25))
-# Step 3 - Flattening
-classifier.add(Flatten())
+model.add(Conv2D(32, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(32, 3, 3, border_mode='same', activation='relu'))
+model.add(Conv2D(32, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(32, 3, 3, border_mode='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-# Step 4 - Full connection
-classifier.add(Dense(output_dim = 500, activation = 'relu')) # the output_dim is chosen by experience
-classifier.add(Dense(output_dim = num_class, activation = 'sigmoid'))
+model.add(Conv2D(64, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(64, 3, 3, border_mode='same', activation='relu'))
+model.add(Conv2D(64, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(64, 3, 3, border_mode='same', activation='relu'))
+model.add(Conv2D(64, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(64, 3, 3, border_mode='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(128, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(128, 3, 3, border_mode='same', activation='relu'))
+model.add(Conv2D(128, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(128, 3, 3, border_mode='same', activation='relu'))
+model.add(Conv2D(128, (3, 3), padding="same", activation="relu"))
+#model.add(Convolution2D(128, 3, 3, border_mode='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(2, activation='softmax'))
+
+
 
 # Compiling the CNN
-sgd= SGD(lr=10e-5,momentum=0.99, decay=0.9999, nesterov=True)
-classifier.compile(optimizer =sgd , loss = 'binary_crossentropy', metrics = ['accuracy'])
- 
-results = []
-start_time = time.time()
-history = classifier.fit(x_train, oneHot(y_train), 
-           batch_size=batch_size, 
-           epochs=epochs, 
-           verbose=1, 
-           validation_data=(x_vali, oneHot(y_vali)))
+#sgd= SGD(lr=0.01,momentum=0.99, decay=0.9999, nesterov=True)
 
-average_time_per_epoch = (time.time() - start_time) / epochs
-results.append((history, average_time_per_epoch))
-plt.style.use('ggplot')
-ax1 = plt.subplot2grid((2, 2), (0, 0))
-ax1.set_title('Accuracy')
-ax1.set_ylabel('Accuracy')
-ax1.set_xlabel('Epochs')
-ax2 = plt.subplot2grid((2, 2), (1, 0))
-ax2.set_title('Loss')
-ax2.set_ylabel('Loss')
-ax2.set_xlabel('Epochs')
-ax3 = plt.subplot2grid((2, 2), (0, 1), rowspan=2)
-ax3.set_title('Time')
-ax3.set_ylabel('Seconds')
+adam = Adam(lr=0.1, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+model.compile(optimizer = adam , loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
-for result in results:
-    ax1.plot(result[0].epoch, result[0].history['val_acc'],label='Test')
-    ax1.plot(result[0].epoch, result[0].history['acc'],label = 'Train')
-    ax2.plot(result[0].epoch, result[0].history['val_loss'],label = 'Test')
-    ax2.plot(result[0].epoch, result[0].history['loss'],label = 'Train')
+# # Step 1 - Convolution
+# #classifier.add(Convolution2D(32, 3, 3, border_mode='same',input_shape = (48, 48, 1), activation = 'relu'))
+# #classifier.add(Convolution2D(32, 3, 3, border_mode='same', input_shape=(48, 48, 1), activation='relu'))
+# classifier.add(Conv2D(32, (3, 3), input_shape=(48, 48, 1), activation="relu", padding="same"))
+# # Step 2 - Pooling
+# classifier.add(MaxPooling2D(pool_size = (5, 5)))
+# #classifier.add(Dropout(0.25))
+# # Adding a second convolutional layer
+# classifier.add(Conv2D(32, (3, 3), activation="relu"))
+# #classifier.add(Convolution2D(32, 3, 3, activation = 'relu'))
+# classifier.add(MaxPooling2D(pool_size = (5, 5)))
+# #classifier.add(Dropout(0.25))
+# # Step 3 - Flattening
+# classifier.add(Flatten())
+#
+# # Step 4 - Full connection
+# classifier.add(Dense(activation="relu", units=500)) # the output_dim is chosen by experience
+# classifier.add(Dense(activation="softmax", units=7))
+#
+# # Compiling the CNN
+# sgd= SGD(lr=10e-5,momentum=0.99, decay=0.9999, nesterov=True)
+# classifier.compile(optimizer =sgd , loss = 'categorical_crossentropy', metrics = ['accuracy'])
+#
+# score = classifier.evaluate(x_train, oneHot(y_train), verbose=0)
+# print('Train loss:', score[0])
+# print('Train accuracy:', score[1])
+#
+# score_vali = classifier.evaluate(x_vali, oneHot(y_vali),verbose=0)
+# print('Vali loss',score_vali[0])
+# print('Vali Accuracy',score_vali[1])
 
-ax1.legend()
-ax2.legend()
-ax3.bar(np.arange(len(results)), [x[1] for x in results],
-         align='center')
-plt.tight_layout()
-plt.show()
 
-score = classifier.evaluate(x_test, oneHot(y_test), verbose=0) 
-print('Test loss:', score[0]) 
-print('Test accuracy:', score[1]) 
-
-# Results
-
-#score = model.evaluate(x_test, one_hot(y_test), verbose=0)
-
-predictions_one_hot = classifier.predict(x_test)
-predictions = predictions_one_hot.argmax(1)
+# results = []
+# start_time = time.time()
+# history = classifier.fit(x_train, oneHot(y_train),
+#            batch_size=batch_size,
+#            epochs=epochs,
+#            verbose=1,
+#            validation_data=(x_vali, oneHot(y_vali)))
+#
+# average_time_per_epoch = (time.time() - start_time) / epochs
+# results.append((history, average_time_per_epoch))
+# plt.style.use('ggplot')
+# ax1 = plt.subplot2grid((2, 2), (0, 0))
+# ax1.set_title('Accuracy')
+# ax1.set_ylabel('Accuracy')
+# ax1.set_xlabel('Epochs')
+# ax2 = plt.subplot2grid((2, 2), (1, 0))
+# ax2.set_title('Loss')
+# ax2.set_ylabel('Loss')
+# ax2.set_xlabel('Epochs')
+# ax3 = plt.subplot2grid((2, 2), (0, 1), rowspan=2)
+# ax3.set_title('Time')
+# ax3.set_ylabel('Seconds')
+#
+# for result in results:
+#     ax1.plot(result[0].epoch, result[0].history['val_acc'],label='Test')
+#     ax1.plot(result[0].epoch, result[0].history['acc'],label = 'Train')
+#     ax2.plot(result[0].epoch, result[0].history['val_loss'],label = 'Test')
+#     ax2.plot(result[0].epoch, result[0].history['loss'],label = 'Train')
+#
+# ax1.legend()
+# ax2.legend()
+# ax3.bar(np.arange(len(results)), [x[1] for x in results],
+#          align='center')
+# plt.tight_layout()
+# plt.show()
+#
+# score = classifier.evaluate(x_test, oneHot(y_test), verbose=0)
+# print('Test loss:', score[0])
+# print('Test accuracy:', score[1])
+#
+# # Results
+#
+# #score = model.evaluate(x_test, one_hot(y_test), verbose=0)
+#
+# predictions_one_hot = classifier.predict(x_test)
+# predictions = predictions_one_hot.argmax(1)
 
 # print("Testing Accuracy: {}%".format(100*accuracy))
 
