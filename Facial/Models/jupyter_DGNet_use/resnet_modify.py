@@ -3,111 +3,112 @@ import pandas as pd
 import numpy as np
 
 
-def shuffle(x_, y_):
-    s = np.arange(x_.shape[0])
-    s = np.random.shuffle(s)
+# def shuffle(x_, y_):
+#     s = np.arange(x_.shape[0])
+#     s = np.random.shuffle(s)
+#
+#     x_re = x_[s]
+#     y_re = y_[s]
+#
+#     x_re = np.reshape(x_re, (len(x_), 48, 48))
+#     y_re = np.reshape(y_re, (len(y_)))
+#     return x_re, y_re
+#
+#
+# def read_fer(path):
+#     # train_path = "C:\\Users\\Jiaming Nie\\Documents\\Work-DeepGlint\Facial\datasets\\train.csv"
+#     data = pd.read_csv(path, dtype='a')
+#     label = np.array(data['emotion'])
+#     img_data = np.array(data['pixels'])
+#
+#     N_sample = label.size
+#
+#     x_data = np.zeros((N_sample, 48 * 48))
+#     # train_label = np.zeros((N_sample, 7), dtype=int)
+#     y_label = np.zeros(N_sample, dtype=int)
+#     # print(train_label)
+#
+#     for i in range(N_sample):
+#         x = img_data[i]
+#         x = np.fromstring(x, dtype=float, sep=' ')
+#         x_max = x.max()
+#         x = x / (x_max + 0.0001)
+#         # print x_max
+#         # print x
+#         x_data[i] = x
+#         y_label[i] = int(label[i])
+#         # train_label[i, label[i]] = 1 #This step seems direct one-hot encoding
+#         # print(y_label[i])
+#         #    img_x = np.reshape(x, (48, 48))
+#         #    plt.subplot(10,10,i+1)
+#         #    plt.axis('off')
+#         #    plt.imshow(img_x, plt.cm.gray)
+#
+#     x_data = np.reshape(x_data, (len(x_data), 48, 48))
+#     return x_data, y_label
+#
+#
+# def ReadData_fer():
+#     # ubuntu path
+#     # path_train = "/home/jiaming/code/DeepGlint-Work/Facial/datasets/train.csv"
+#     # path_test = "/home/jiaming/code/DeepGlint-Work/Facial/datasets/test.csv"
+#
+#     # windows path
+#     path_train = "/train/trainset/1/train.csv"
+#     path_test = "/train/trainset/1/test.csv"
+#     path_vali = "/train/trainset/1/val.csv"
+#
+#     x_train, y_train = read_fer(path_train)
+#     x_test, y_test = read_fer(path_test)
+#     x_vali, y_vali = read_fer(path_vali)
+#
+#     x_train, y_train = shuffle(x_train, y_train)
+#     x_test, y_test = shuffle(x_test, y_test)
+#     x_vali, y_vali = shuffle(x_vali, y_vali)
+#
+#     return x_train, y_train, x_test, y_test, x_vali, y_vali
+#
+#
+# def zca_whitening(X):
+#     """
+#         Function to compute ZCA whitening matrix (aka Mahalanobis whitening).
+#         INPUT:  X: [M x N] matrix.
+#             Rows: Variables
+#             Columns: Observations
+#         OUTPUT: ZCAMatrix: [M x M] matrix
+#         """
+#     mean_ = np.mean(X)
+#     X = X - mean_
+#     # Covariance matrix [column-wise variables]: Sigma = (X-mu)' * (X-mu) / N
+#     sigma = np.cov(X, rowvar=True)  # [M x M]
+#     # Singular Value Decomposition. X = U * np.diag(S) * V
+#     U, S, V = np.linalg.svd(sigma)
+#     # U: [M x M] eigenvectors of sigma.
+#     # S: [M x 1] eigenvalues of sigma.
+#     # V: [M x M] transpose of U
+#     # Whitening constant: prevents division by zero
+#     epsilon = 0.1
+#     # ZCA Whitening matrix: U * Lambda * U'
+#     ZCAMatrix = np.dot(U, np.dot(np.diag(1.0 / np.sqrt(S + epsilon)), U.T))  # [M x M]
+#     return ZCAMatrix
+#
+#
+# def normalization(x_):
+#     length = len(x_)
+#
+#     for i in range(length):
+#         x_[i] = zca_whitening(x_[i])
+#
+#     return x_
 
-    x_re = x_[s]
-    y_re = y_[s]
 
-    x_re = np.reshape(x_re, (len(x_), 48, 48))
-    y_re = np.reshape(y_re, (len(y_)))
-    return x_re, y_re
+# def oneHot(y_):
+#     # Function to encode output labels from number indexes
+#     # e.g.: [[5], [0], [3]] --> [[0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0]]
+#     y_ = y_.reshape(len(y_))
+#     n_values = int(np.max(y_)) + 1
+#     return np.eye(n_values)[np.array(y_, dtype=np.int32)]  # Returns FLOATS
 
-
-def read_fer(path):
-    # train_path = "C:\\Users\\Jiaming Nie\\Documents\\Work-DeepGlint\Facial\datasets\\train.csv"
-    data = pd.read_csv(path, dtype='a')
-    label = np.array(data['emotion'])
-    img_data = np.array(data['pixels'])
-
-    N_sample = label.size
-
-    x_data = np.zeros((N_sample, 48 * 48))
-    # train_label = np.zeros((N_sample, 7), dtype=int)
-    y_label = np.zeros(N_sample, dtype=int)
-    # print(train_label)
-
-    for i in range(N_sample):
-        x = img_data[i]
-        x = np.fromstring(x, dtype=float, sep=' ')
-        x_max = x.max()
-        x = x / (x_max + 0.0001)
-        # print x_max
-        # print x
-        x_data[i] = x
-        y_label[i] = int(label[i])
-        # train_label[i, label[i]] = 1 #This step seems direct one-hot encoding
-        # print(y_label[i])
-        #    img_x = np.reshape(x, (48, 48))
-        #    plt.subplot(10,10,i+1)
-        #    plt.axis('off')
-        #    plt.imshow(img_x, plt.cm.gray)
-
-    x_data = np.reshape(x_data, (len(x_data), 48, 48))
-    return x_data, y_label
-
-
-def ReadData_fer():
-    # ubuntu path
-    # path_train = "/home/jiaming/code/DeepGlint-Work/Facial/datasets/train.csv"
-    # path_test = "/home/jiaming/code/DeepGlint-Work/Facial/datasets/test.csv"
-
-    # windows path
-    path_train = "/train/trainset/1/train.csv"
-    path_test = "/train/trainset/1/test.csv"
-    path_vali = "/train/trainset/1/val.csv"
-
-    x_train, y_train = read_fer(path_train)
-    x_test, y_test = read_fer(path_test)
-    x_vali, y_vali = read_fer(path_vali)
-
-    x_train, y_train = shuffle(x_train, y_train)
-    x_test, y_test = shuffle(x_test, y_test)
-    x_vali, y_vali = shuffle(x_vali, y_vali)
-
-    return x_train, y_train, x_test, y_test, x_vali, y_vali
-
-
-def zca_whitening(X):
-    """
-        Function to compute ZCA whitening matrix (aka Mahalanobis whitening).
-        INPUT:  X: [M x N] matrix.
-            Rows: Variables
-            Columns: Observations
-        OUTPUT: ZCAMatrix: [M x M] matrix
-        """
-    mean_ = np.mean(X)
-    X = X - mean_
-    # Covariance matrix [column-wise variables]: Sigma = (X-mu)' * (X-mu) / N
-    sigma = np.cov(X, rowvar=True)  # [M x M]
-    # Singular Value Decomposition. X = U * np.diag(S) * V
-    U, S, V = np.linalg.svd(sigma)
-    # U: [M x M] eigenvectors of sigma.
-    # S: [M x 1] eigenvalues of sigma.
-    # V: [M x M] transpose of U
-    # Whitening constant: prevents division by zero
-    epsilon = 0.1
-    # ZCA Whitening matrix: U * Lambda * U'
-    ZCAMatrix = np.dot(U, np.dot(np.diag(1.0 / np.sqrt(S + epsilon)), U.T))  # [M x M]
-    return ZCAMatrix
-
-
-def normalization(x_):
-    length = len(x_)
-
-    for i in range(length):
-        x_[i] = zca_whitening(x_[i])
-
-    return x_
-
-
-def oneHot(y_):
-    # Function to encode output labels from number indexes
-    # e.g.: [[5], [0], [3]] --> [[0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0]]
-    y_ = y_.reshape(len(y_))
-    n_values = int(np.max(y_)) + 1
-    return np.eye(n_values)[np.array(y_, dtype=np.int32)]  # Returns FLOATS
 
 x_train,y_train,x_test,y_test,x_vali,y_vali = ReadData_fer()
 
@@ -160,8 +161,8 @@ def Conv2d_BN(x, nb_filter, kernel_size, strides=(1, 1), padding='same', name=No
 
 
 def identity_Block(inpt, nb_filter, kernel_size, strides=(1, 1), with_conv_shortcut=False):
-    x = Conv2d_BN(inpt, nb_filter=nb_filter, kernel_size=kernel_size, strides=strides, padding='same',kernel_initializer= 'glorot_uniform',kernel_regularizer=l2(1e-5))
-    x = Conv2d_BN(x, nb_filter=nb_filter, kernel_size=kernel_size, padding='same',kernel_initializer= 'glorot_uniform',kernel_regularizer=l2(1e-5))
+    x = Conv2d_BN(inpt, nb_filter=nb_filter, kernel_size=kernel_size, strides=strides, padding='same')
+    x = Conv2d_BN(x, nb_filter=nb_filter, kernel_size=kernel_size, padding='same')
     if with_conv_shortcut:
         shortcut = Conv2d_BN(inpt, nb_filter=nb_filter, strides=strides, kernel_size=kernel_size)
         x = add([x, shortcut])
@@ -172,9 +173,9 @@ def identity_Block(inpt, nb_filter, kernel_size, strides=(1, 1), with_conv_short
 
 def bottleneck_Block(inpt,nb_filters,strides=(1,1),with_conv_shortcut=False):
     k1,k2,k3=nb_filters
-    x = Conv2d_BN(inpt, nb_filter=k1, kernel_size=1, strides=strides, padding='same',kernel_initializer= 'glorot_uniform',kernel_regularizer=l2(1e-5))
-    x = Conv2d_BN(x, nb_filter=k2, kernel_size=3, padding='same',kernel_initializer= 'glorot_uniform',kernel_regularizer=l2(1e-5))
-    x = Conv2d_BN(x, nb_filter=k3, kernel_size=1, padding='same',kernel_initializer= 'glorot_uniform',kernel_regularizer=l2(1e-5))
+    x = Conv2d_BN(inpt, nb_filter=k1, kernel_size=1, strides=strides, padding='same')
+    x = Conv2d_BN(x, nb_filter=k2, kernel_size=3, padding='same')
+    x = Conv2d_BN(x, nb_filter=k3, kernel_size=1, padding='same')
     if with_conv_shortcut:
         shortcut = Conv2d_BN(inpt, nb_filter=k3, strides=strides, kernel_size=1)
         x = add([x, shortcut])

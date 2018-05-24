@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import scipy.io as sio
 #import torch
 #import torch.utils.data as data_utils
 
@@ -85,3 +86,20 @@ def shuffle(x_,y_):
 # test /= std
 # print(test)
 
+def save_to_mat():
+    x_train, y_train, x_test, y_test, x_vali, y_vali = ReadData_fer()
+    x_train = x_train.reshape((len(x_train), 48, 48, 1))
+    x_test = x_test.reshape((len(x_test), 48, 48, 1))
+    x_vali = x_vali.reshape((len(x_vali), 48, 48, 1))
+
+    train_name = 'x_train.mat'
+    vali_name = 'x_vali.mat'
+    test_name = 'x_test.mat'
+    sio.savemat(train_name, {'x_train': x_train})
+    sio.savemat(test_name, {'x_test': x_test})
+    sio.savemat(vali_name, {'x_vali': x_vali})
+    np.savetxt('y_train.txt', y_train)
+    np.savetxt('y_test.txt', y_test)
+    np.savetxt('y_vali.txt', y_vali)
+
+save_to_mat()

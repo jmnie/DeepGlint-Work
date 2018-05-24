@@ -120,22 +120,26 @@ def file_path(path):
 
     return file_path_dict
 
-def copy_file(destination_path):
+def copy_file(destination_path,filepath,filename):
     #destination_path = "C:\\Users\Datasets\AffectNet\images"
     path = "C:\\Users\Datasets\AffectNet\Manually_Annotated_Images"
+    path_ = path + filepath
+    target_path = destination_path + str('\\') + filename
+    copyfile(path_, target_path)
 
-    print(path)
-    main_dir = os.listdir(path)
-    for subdir in main_dir:
-        dirpath = os.path.join(path,subdir)
-        sub_dirs = os.listdir(dirpath)
 
-        for file in sub_dirs:
-            file_path = os.path.join(dirpath,file)
-            #print(file_path)
-            target_path = os.path.join(destination_path,file)
-            #print(target_path)
-            copyfile(file_path, target_path)
+    # print(path)
+    # main_dir = os.listdir(path)
+    # for subdir in main_dir:
+    #     dirpath = os.path.join(path,subdir)
+    #     sub_dirs = os.listdir(dirpath)
+    #
+    #     for file in sub_dirs:
+    #         file_path = os.path.join(dirpath,file)
+    #         #print(file_path)
+    #         target_path = os.path.join(destination_path,file)
+    #         #print(target_path)
+    #         copyfile(file_path, target_path)
 
 
 #file_path(train_path)
