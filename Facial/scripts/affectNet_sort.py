@@ -79,6 +79,13 @@ def read_csv(train_path):
         #print("index: ",index)
         return str(text)[index:]
 
+    def findDot(text):
+        search = '.'
+        start = 0
+        index = text.find(search, start)
+        # print("index: ",index)
+        return str(text)[:index]
+
     i = 0
     file_dict = dict()
 
@@ -90,7 +97,16 @@ def read_csv(train_path):
         _height = int(row[face_height])
         landmark = getLandMark(row[facial_landmarks])
         label = int(row[expression])
+
+
+        # Remove the dirname
         file_name = getFileName(row[filename])
+        #print(file_name)
+        # Remove postfix
+        file_name = findDot(file_name)
+
+        #print(file_name)
+
         temp_value = [_x,_y,_width,_height,landmark,label,filedir]
         file_dict[file_name] = temp_value
         #print("i :",i,filedir)
