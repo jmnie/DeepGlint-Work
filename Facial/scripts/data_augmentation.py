@@ -115,6 +115,8 @@ def random_crop_(image, crop_shape, padding=None):
         print("WARNING!!! nothing to do!!!")
         return image
 
+# def DataAugExample():
+#     data_gen =
 
 if __name__ == "__main__":
     #image_path = "F:\AffectNet\\result\\no_face\\0be9c9c53fd9b7d58d300744821ea716ecafd71db78ce1da18558325.JPG"
