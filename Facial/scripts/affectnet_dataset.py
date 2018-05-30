@@ -121,8 +121,8 @@ def createDirectroy(directory):
         os.makedirs(directory)
 
 def final_crop():
-    test_path = "F:\AffectNet\Processed\Manually_Annotated_aligned"
-    des_path = "F:\AffectNet\Processed\\final_data"
+    des_path = "F:\AffectNet\Processed\\final_data_align"
+    test_path = "F:\\result\manuallyannoimg"
 
     for subdir in os.listdir(test_path):
         filepath = os.path.join(test_path, subdir)

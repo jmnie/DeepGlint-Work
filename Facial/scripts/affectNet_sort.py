@@ -90,7 +90,8 @@ def read_csv(train_path):
     file_dict = dict()
 
     for row in csvReader:
-        filedir = getNewDir(row[filename])
+        #filedir = getNewDir(row[filename])
+        filedir = str(row[filename])
         _x = int(row[face_x])
         _y = int(row[face_y])
         _width = int(row[face_width])
@@ -99,16 +100,18 @@ def read_csv(train_path):
         label = int(row[expression])
 
 
+        #print("File Dir ",filedir)
         # Remove the dirname
-        file_name = getFileName(row[filename])
+        #file_name = getFileName(row[filename])
         #print(file_name)
         # Remove postfix
-        file_name = findDot(file_name)
+        #file_name = findDot(file_name)
 
         #print(file_name)
 
-        temp_value = [_x,_y,_width,_height,landmark,label,filedir]
-        file_dict[file_name] = temp_value
+        #temp_value = [_x,_y,_width,_height,landmark,label,filedir]
+        temp_value = [label,LABELS[label]]
+        file_dict[filedir] = temp_value
         #print("i :",i,filedir)
 
     #print("Iteration :",i)
