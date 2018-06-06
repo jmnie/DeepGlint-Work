@@ -1,86 +1,113 @@
-from resnet_mx import *
 import mxnet as mx
 from mxnet import gluon
 from mxnet import nd, autograd
+from mxnet.gluon.model_zoo import vision
 import numpy as np
 import scipy.io
+from time import time
 
-
-def compile(model):
-    ctx = mx.cpu()
-    init = mx.init.Xavier(factor_type="in", magnitude=255)
-    print(init.dumps())
-    model.collect_params().initialize(init, ctx=ctx)
-    trainer = gluon.Trainer(model.collect_params(), 'sgd', {'learning_rate': .001})
-    return model, trainer
-
-def getLoss():
-    softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
-    return softmax_cross_entropy
-
-def evaluate_accuracy(data,label, net):
-    ctx = mx.cpu()
+def evaluate_accuracy(data_iterator, net, ctx):
     acc = mx.metric.Accuracy()
 
-    for i in range(len(label)):
-        data_ = data[i]
-        label_ = label[i]
-        output = net(data)
-        predeictions = nd.argmax(output,axis=1)
-        acc.update(preds=predictions, labels=label)
-
+    data = data_iterator.data[0]
+    label = data_iterator.label[0]
+    
+    for i in range(len(data)):
+        temp_data = data[i].as_in_context(ctx)
+        temp_label = label[i].as_in_context(ctx)
+        output = net(temp_data)
+        predictions = nd.argmax(output,axis=1)
+        acc.update(preds = predictions, labels = temp_label)
+    
     return acc.get()[1]
+
+def getTestData(test_iter):
+
+    result = []
+    for data in test_iter:
+        result.append(data)
+    
+    return result[0]
+
+def getValiData(vali_iter):
+
+    result = []
+    for data in vali_iter:
+        result.append(data)
+    
+    return result[0]
 
 if __name__ == '__main__':
 
-    dataset_path = '/media/jiaming/Seagate Backup Plus Drive/fer2013/'
-    x_train_path = dataset_path + 'x_train.mat'
-    y_train_path = dataset_path + 'y_train.txt'
-    x_vali_path = dataset_path + 'x_vali.mat'
-    y_vali_path = dataset_path + 'y_vali.txt'
+    ## List File Path:
+    data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/aligned_final/'
+    path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
+    batch_size  = 32
+    num_classes = 8
+    channel = 3
+    size = 224
+    epoch = 5
+
+    ctx = mx.cpu()
+
+    train_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(channel, size, size), label_width=1,
+                                   path_imglist=path_out+'train.lst',path_root=data_dir)
+    vali_iter = mx.image.ImageIter(batch_size = 475, data_shape=(channel, size, size), label_width=1,
+                                   path_imglist=path_out+'vali.lst',path_root=data_dir)
+    test_iter = mx.image.ImageIter(batch_size = 480, data_shape=(channel, size, size), label_width=1,
+                                   path_imglist=path_out+'test.lst',path_root=data_dir)
+
+    test_data = getTestData(test_iter)
+    vali_data = getValiData(vali_iter)
+
+    resnet18 = vision.resnet18_v2(pretrained=False,ctx=ctx)
+
+    ## Initialization
+    resnet18.collect_params().initialize(mx.init.Xavier(magnitude=2.24), ctx=ctx)
+    loss = gluon.loss.SoftmaxCrossEntropyLoss()
+    trainer = gluon.Trainer(resnet18.collect_params(), 'sgd', {'learning_rate': 0.1})
+
+    #train_iter.reset()
+    #test_iter.reset()
     
-    x_train = nd.array(scipy.io.loadmat(x_train_path)['x_train'])
-    print(x_train.shape)
-    y_train = nd.array(np.loadtxt(y_train_path))
-    x_vali = nd.array(scipy.io.loadmat(x_vali_path)['x_vali'])
-    print(x_vali.shape)
-    y_vali = nd.array(np.loadtxt(y_vali_path))
-
-
-    epochs = 5
+    moving_loss = 0
     smoothing_constant = .01
-    batch_size = 1
 
-    model = resnet18_v2()
-    model,trainer = compile(model)
+    for e in range(epoch):
 
-    softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
-    model_para = params = {'pretrained':True,
-                            }
+        train_loss, train_acc, n = 0.0, 0.0, 0.0
+        train_iter.reset()
+        test_iter.reset()
 
-    for e in range(epochs):
-        for i in range(len(x_train)):
-            data = x_train[i]
-            label = y_train[i]
+        start = time()
+
+        for data_ in train_iter:
+            losses = []
+            data = data_.data[0]
+            label = data_.label[0]
+
             with autograd.record():
-                output = model(data)
-                loss = softmax_cross_entropy(output, label)
-            loss.backward()
-            trainer.step(data.shape[0])
+                outputs = [resnet18(X) for X in data]
+                losses = [loss(yhat, y) for yhat, y in zip(outputs, label)]
+
+            for l in losses:
+                l.backward()
             
-            ##########################
-            #  Keep a moving average of the losses
-            ##########################
-            curr_loss = nd.mean(loss).asscalar()
-            moving_loss = (curr_loss if ((i == 0) and (e == 0)) 
-                        else (1 - smoothing_constant) * moving_loss + (smoothing_constant) * curr_loss)
-                
-        test_accuracy = evaluate_accuracy(x_vali, model)
-        train_accuracy = evaluate_accuracy(x_train, model)
-        print("Epoch %s. Loss: %s, Train_acc %s, Test_acc %s" % (e, moving_loss, train_accuracy, test_accuracy))
+            train_acc += sum([(yhat.argmax(axis=1)==y).sum().asscalar()
+                              for yhat, y in zip(outputs, label)])
+            train_loss += sum([l.sum().asscalar() for l in losses])
+            trainer.step(batch_size)
+            n += batch_size
+        
+        test_acc = evaluate_accuracy(test_data, resnet18, ctx)
+        print("Epoch %d. Loss: %.3f, Train acc %.2f, Test acc %.2f, Time %.1f sec" % (
+            epoch, train_loss/n, train_acc/n, test_acc, time() - start
+        ))
 
 
 
-    #model = resnet18_v2()
-    #compile(model)
+
+
+
+   
 

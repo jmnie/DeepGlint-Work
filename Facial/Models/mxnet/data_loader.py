@@ -4,6 +4,10 @@ import os
 from sklearn.model_selection import train_test_split
 import random
 
+def normalization(data):
+    data = data * (1. / 255) - 0.5
+    return data
+
 def shuffle(_data,_label):
     c = list(zip(_data, _label))
     random.shuffle(c)
@@ -181,13 +185,33 @@ if __name__ == '__main__':
 
     # Test Loading 
     import mxnet as mx
+    from mxnet import nd, autograd
     batch_size = 32
-    data_iter = mx.image.ImageIter(batch_size=batch_size, data_shape=(3, 224, 224), label_width=1,
-                                   path_imglist=path_out+'test.lst',path_root=data_dir)
-    data_iter.reset()
-    for data in data_iter:
-        d = data.data[0]
-        print(data.data)
-        #print(d.shape)
+
+    mean = 127
+    std = 255
+    mean_array = nd.array([mean,mean,mean])
+    std_array = nd.array([std,std,std])
+
+    data_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(3, 224, 224), label_width=1,
+                                   path_imglist=path_out+'test.lst',
+                                   path_root=data_dir,
+                                   shuffle = True,
+                                   aug_list=[mx.image.HorizontalFlipAug(0.5),
+                                   mx.image.ColorJitterAug(0.1, 0.1, 0.1)])
+
+    #data_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(3, 224, 224), label_width=1,
+    #                               path_imglist=path_out+'test.lst', path_root=data_dir)
     
+    data_iter.reset()
+
+    for data in data_iter:
+        print(normalization(data.data[0]))
+        #print(data.data[0].dtype)
+
+    
+    
+
+
+
     
