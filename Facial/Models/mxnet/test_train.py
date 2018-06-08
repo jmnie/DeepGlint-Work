@@ -19,7 +19,7 @@ std = 255
 mean = 127
 
 path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
-data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/aligned_final/'
+data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_Images/'
 mean_array = nd.array([mean,mean,mean])
 std_array = nd.array([std,std,std])
 
@@ -34,7 +34,7 @@ aug_list = mx.image.CreateAugmenter(data_shape=(3,224,224), resize=0, rand_crop=
 
 train_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(CHANNEL, SIZE, SIZE), 
                                 label_width=1,
-                                path_imglist=path_out+'test.lst',
+                                path_imglist=path_out+'train.lst',
                                 path_root=data_dir,
                                 #rand_mirror=True,
                                 aug_list = aug_list,
@@ -43,13 +43,13 @@ train_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(CHANNEL, SI
 
 test_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(CHANNEL, SIZE, SIZE), 
                                label_width=1,
-                               path_imglist=path_out+'vali.lst',
+                               path_imglist=path_out+'test.lst',
                                path_root=data_dir,
                                shuffle = False)
 
 def evaluate_accuracy(data_iterator, net, ctx):
     acc = mx.metric.Accuracy()
-    for batch in enumerate(data_iterator):
+    for i,batch in enumerate(data_iterator):
         data = batch.data[0].as_in_context(ctx)
         label = batch.label[0].as_in_context(ctx)
         output = net(data)
@@ -69,7 +69,7 @@ trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': .1})
 softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
 #print(net)
 
-epochs = 2
+epochs = 200
 smoothing_constant = .01
 
 

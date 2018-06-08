@@ -3,6 +3,7 @@ import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 import random
+import mxnet as mx
 
 def normalization(data):
     data = data * (1. / 255) - 0.5
@@ -95,10 +96,10 @@ def mxnet_makelst(mapping_dir,data_dir,out_path):
     write_list(path_out_vali,vali_list)
 
 def mapping_file():
-    crop_image = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/aligned_final/'
+    crop_image = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_Images/'
     dirs = os.listdir(crop_image)
     
-    with open('/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/AffectNet.json','r') as fp:
+    with open('affect_dict.json','r') as fp:
         dataset_dict = json.load(fp)
     
     new_dataset_dict = dict()
@@ -179,35 +180,36 @@ if __name__ == '__main__':
     #mapping_file()
 
     mapping_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224_mapping/basic_emotion/'
-    data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/aligned_final/'
+    data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_Images/'
     path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
-    #mxnet_makelst(mapping_dir,data_dir,path_out)
+    mxnet_makelst(mapping_dir,data_dir,path_out)
 
     # # Test Loading 
     # import mxnet as mx
-    # from mxnet import nd, autograd
-    # batch_size = 32
+    from mxnet import nd, autograd
+    batch_size = 32
 
-    # mean = 127
-    # std = 255
-    # mean_array = nd.array([mean,mean,mean])
-    # std_array = nd.array([std,std,std])
+    mean = 127
+    std = 255
+    mean_array = nd.array([mean,mean,mean])
+    std_array = nd.array([std,std,std])
 
-    # data_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(3, 224, 224), label_width=1,
-    #                                path_imglist=path_out+'test.lst',
-    #                                path_root=data_dir,
-    #                                shuffle = True,
-    #                                aug_list=[mx.image.HorizontalFlipAug(0.5),
-    #                                mx.image.ColorJitterAug(0.1, 0.1, 0.1)])
+    aug_list = mx.image.CreateAugmenter(data_shape=(3,224,224), resize=0, rand_crop=True, rand_resize=False, rand_mirror=True, mean=True, std=True, brightness=0.1, contrast=0, saturation=0, pca_noise=0, inter_method=2)
 
-    # #data_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(3, 224, 224), label_width=1,
-    # #                               path_imglist=path_out+'test.lst', path_root=data_dir)
+    data_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(3, 224, 224), label_width=1,
+                                   path_imglist=path_out+'test.lst',
+                                   path_root=data_dir,
+                                   shuffle = True,
+                                   aug_list=aug_list)
+
+    #data_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(3, 224, 224), label_width=1,
+    #                               path_imglist=path_out+'test.lst', path_root=data_dir)
     
-    # data_iter.reset()
+    data_iter.reset()
 
-    # for data in data_iter:
-    #     print(normalization(data.data[0]))
-    #     #print(data.data[0].dtype)
+    for data in data_iter:
+        #print(normalization(data.data[0]))
+        print(data.label[0])
 
     
     
