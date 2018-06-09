@@ -1,6 +1,7 @@
 import csv
 import os
 from shutil import copyfile
+import json
 
 train_path = "C:\\Users\Datasets\AffectNet\Manually_Annotated_Images"
 
@@ -8,7 +9,7 @@ LABELS = ["Neutral","Happiness","Sadness","Suprise","Fear","Disgust","Anger","Co
 
 ## Read CSV
 
-train_csv = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
+#train_csv = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
 class dict_object:
     def __init__(self,co_1,co_2,co_3,co_4,co_5,co_6,co_7):
         self.co_1 = co_1
@@ -176,3 +177,16 @@ def copy_file(destination_path,filepath,filename):
 
 #dataset_path = "C:\\Users\Datasets\AffectNet\Manually_Annotated_Images"
 #file_path(dataset_path)
+
+if __name__ == '__main__':
+    train_path = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/training.csv'
+    vali_path = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/validation.csv'
+
+    train_dict = read_csv(train_path)
+    vali_dict = read_csv(vali_path)
+    combine_dict = {**train_dict,**vali_dict}
+
+    with open('affect_dict.json','w') as fp:
+        json.dump(combine_dict,fp)
+    
+    

@@ -121,19 +121,38 @@ def random_crop_(image, crop_shape, padding=None):
 if __name__ == "__main__":
     #image_path = "F:\AffectNet\\result\\no_face\\0be9c9c53fd9b7d58d300744821ea716ecafd71db78ce1da18558325.JPG"
 
-    image_path = "C:\\Users\Jiaming Nie\Documents\GitHub\DeepGlint-Work\Facial\datasets\\test\\0\\00617.jpg"
-    image_src = Image.open(image_path)
+    # image_path = "C:\\Users\Jiaming Nie\Documents\GitHub\DeepGlint-Work\Facial\datasets\\test\\0\\00617.jpg"
+    # image_src = Image.open(image_path)
 
-    #print(image_src.shape)
-    crop_width = image_src.size[0] - 3
-    crop_height = image_src.size[1] - 3
-    image_dst_crop = random_crop_(image_src, [crop_width, crop_height], padding=10)
+    # #print(image_src.shape)
+    # crop_width = image_src.size[0] - 3
+    # crop_height = image_src.size[1] - 3
+    # image_dst_crop = random_crop_(image_src, [crop_width, crop_height], padding=10)
 
-    plt.figure()
-    plt.subplot(221)
-    plt.imshow(image_src)
-    plt.title("oringin image")
-    plt.subplot(222)
-    plt.imshow(image_dst_crop)
-    plt.title("crop image")
-    plt.show()
+    # plt.figure()
+    # plt.subplot(221)
+    # plt.imshow(image_src)
+    # plt.title("oringin image")
+    # plt.subplot(222)
+    # plt.imshow(image_dst_crop)
+    # plt.title("crop image")
+    # plt.show()
+
+    ## Test Code:
+    x_train = np.ones((1024,224,3,3))
+    y_train = np.ones(1024)
+    data_aug = ImageDataGenerator(
+          #featurewise_center=True,
+          #featurewise_std_normalization=True,
+          rotation_range=20,
+          width_shift_range=0.2,
+          height_shift_range=0.2,
+          horizontal_flip=True)
+    
+    batches = data_aug.flow(x_train,y_train,batch_size=len(y_train))
+    for batch in batches:
+        break
+    print(batch[0].shape)
+    print(batch[1].shape)
+
+    print(batches[0][1].shape)
