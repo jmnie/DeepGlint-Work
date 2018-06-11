@@ -18,4 +18,6 @@
 *.bib
 *.json
 *.iml
-
+*.lst
+*.rec
+*.idx
