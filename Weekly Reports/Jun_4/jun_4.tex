@@ -75,8 +75,9 @@
 \setlength{\parskip}{4pt}        % sets spacing between paragraphs
 \interfootnotelinepenalty=500    % this prevents footnotes breaking across pages
 
+
 \title{\includegraphics[width=0.45\textwidth]{dg}
-        \\AffectNet Dataset Description    }          % <<<<<<<<< change the title as appropriate
+        \\AffectNet Paper Summary and Training Result  }          % <<<<<<<<< change the title as appropriate
 \author{Jiaming Nie}                    % <<<<<<<<< module code
 
 \begin{document}
@@ -88,11 +89,9 @@
 % because we don't want a page number on the title page
 % Thanks to Huang Shanyue for suggesting this 
 
-
-
-
 %\date{\today}
 \thispagestyle{empty}  %去除首页页码
+%\tableofcontents
 
 \end{titlepage}
 
@@ -101,8 +100,77 @@
 
 %\newpage
 
+
 \begin{CJK}{UTF8}{gbsn}
-	这是一个宋体中文测试，处理简体字。
+	
+\section{AffectNet Paper 模型}
+
+AffectNet的原paper利用了三种模型对人脸表进行进行建模分类，具体是三种:
+
+\begin{table}[htbp] 
+	\begin{center}
+		\caption{AffectNet 中几种分类与回归模型}
+		\begin{tabular}{|l|p{270pt}|} \hline
+			Categorical Model & 分类模型，根据不同表情图片与标签进行分类   \\ \hline
+			Dimensional Model & 纬度模型，基于不同表情的Arousal(情绪的强烈程度)和Valence(情绪的正负倾向),以上两个数值均为连续的。\\ \hline
+			Facial Action Coding System (FACS) &  根据脸部提取的特征点，用于描述脸部表情的动作，并不直接给出表情的分类。 用Action Unit来表示。AU6和AU12可能均表示高兴。\\ \hline
+		\end{tabular}
+		
+		\label{tab:kf_meaning}
+	\end{center}
+\end{table}
+
+\section{模型Baseline}
+
+\subsection{Categorical Model Baseline}
+
+数据集本身并不均衡，对于不均衡的数据集，采取以下几种方式:
+
+\begin{itemize}
+\item Imbalanced learning
+\item Down-Sampling 下采样
+\item Up-Sampling 上采样
+\item Weighted-Loss 加权损失
+\end{itemize}
+
+所用的CNN是AlexNet，并且数据在处理前，对图片进行256$/times$256的crop，并在数据增强阶段进行224$/times$224的random crop。
+
+训练的参数:
+
+\begin{itemize}
+\item Epoch: 20
+\item Batch Size: 256
+\item Learning Rate: 0.01 (每隔10000次叠代下降10\%)
+\item Momentum: 0.9
+\end{itemize}
+
+\subsubsection{不同模型下的结果}
+
+如图\ref{Fig:t7}中所示，对于Original和skew-normalized下，top-1和top-2 F1 score的结果.
+
+加权损失的表现是最好的.
+
+\newpage
+
+ \begin{figure}[htbp]
+	
+	\centering %使插入的图片居中显示
+	\includegraphics[width=10cm]{fscore}
+	
+	\caption{Top 2 F-score}
+	\label{Fig:t7}
+	%插入图片的标题，一般放在图片的下方，放在表格的上方
+	
+\end{figure}
+
+\subsection{Dimensional Model Baseline}
+
+\section{ResNet18 Training Result (Using Keras)}
+
+	
+	
+	
+
 \end{CJK}
 
 

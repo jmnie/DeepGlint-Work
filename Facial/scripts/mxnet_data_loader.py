@@ -161,26 +161,29 @@ def mxnet_makelst(mapping_dir,data_dir,out_path):
 
 if __name__ == "__main__":
     # mapping_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224_mapping/basic_emotion/'
-    # data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/aligned_final/'
-    # path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
+    # data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224crop_1/'
+    # path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
     # mapping_file(data_dir,mapping_dir)
     # mxnet_makelst(mapping_dir,data_dir,path_out)
 
     data_iter = mx.io.ImageRecordIter(
-                path_imgrec = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/test.rec", # The target record file.
-                path_imgidx = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/test.idx",
+                path_imgrec = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.rec", # The target record file.
+                path_imgidx = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.idx",
                 data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
                 batch_size=4, # Number of items per batch.
-                resize=256, # Resize the shorter edge to 256 before cropping.
-                rand_crop = True,
+                #resize=256, # Resize the shorter edge to 256 before cropping.
+                #rand_crop = Tru,
     )
-    # You can now use the data_iter to access batches of images.
-    batch = data_iter.next() # first batch.
-    images = batch.data[0] # This will contain 4 (=batch_size) images each of 3x227x227.
-    # process the images
-    label = batch.label[0]
+    # # You can now use the data_iter to access batches of images.
+    # batch = data_iter.next() # first batch.
+    # images = batch.data[0] # This will contain 4 (=batch_size) images each of 3x227x227.
+    # # process the images
+    # label = batch.label[0]
 
-    data_iter.reset() # To restart the iterator from the beginning.
+    # data_iter.reset() # To restart the iterator from the beginning.
 
-    print(images.shape)
-    print(label.shape)
+    # print(images.shape)
+    # print(label.shape)
+    for batch in data_iter:
+        break
+    print(batch.data[0])

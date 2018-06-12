@@ -1,8 +1,8 @@
-
 import json
 import os
 from affectNet_sort import read_csv
 from PIL import Image
+import numpy as np
 
 path = "C:\\Users\Jiaming Nie\Documents\GitHub\DeepGlint-Work\Facial\scripts\\affectNet.json"
 LABELS = ["Neutral","Happiness","Sadness","Suprise","Fear","Disgust","Anger","Contempt","None","Uncertain","No-Face"]
@@ -177,4 +177,23 @@ def final_crop():
 
 #crop_demo()
 
-final_crop()
+#final_crop()
+
+def test():
+    img = Image.open('/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/image.jpg')
+    x = 112
+    y = 112
+    length = 160
+    array = (np.array(img))
+    #print(array.shape)
+    area = (x-int(0.5*length), y-int(0.5*length), x+int(0.5*length), y+int(0.5*length))
+    cropped_img = img.crop(area)
+    cropped_img.show()
+    #createDirectroy(des_file_path_)
+    #cropped_img.save(des_file_path)
+
+
+if __name__ == '__main__':
+    #test()
+    import math
+    print(-math.log(0.22))
