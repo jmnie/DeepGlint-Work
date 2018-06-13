@@ -196,4 +196,4 @@ def test():
 if __name__ == '__main__':
     #test()
     import math
-    print(-math.log(0.22))
+    print(-math.log(0.39))

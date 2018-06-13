@@ -7,8 +7,8 @@ from affectNet_sort import read_csv
 
 def affectNet_dict():
 
-    train_csv = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\training.csv"
-    vali_csv = "C:\\Users\Jiaming Nie\Downloads\Manually_Annotated_file_lists\\validation.csv"
+    train_csv = "/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/training.csv"
+    vali_csv = "/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/validation.csv"
 
     train_dict = read_csv(train_csv)
     vali_dict = read_csv(vali_csv)
@@ -16,6 +16,22 @@ def affectNet_dict():
 
     with open("AffectNet.json",'w') as fp:
         json.dump(merge_dict,fp)
+
+    print("Done")
+
+def train_vali_dict():
+    train_csv = "/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/training.csv"
+    vali_csv = "/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/validation.csv"
+
+    train_dict = read_csv(train_csv)
+    vali_dict = read_csv(vali_csv)
+    #merge_dict = {**train_dict,**vali_dict}
+
+    with open("/media/jiaming/Seagate Backup Plus Drive/AffectNet/train_test_json/train.json",'w') as fp:
+        json.dump(train_dict,fp)
+    
+    with open("/media/jiaming/Seagate Backup Plus Drive/AffectNet/train_test_json/vali.json","w") as fp:
+        json.dump(vali_dict,fp)
 
     print("Done")
 
@@ -147,4 +163,7 @@ def distributed_dataset():
 # print(test_array)
 #dataset_script()
 #affectNet_dict()
-dataset_script()
+#dataset_script()
+
+if __name__ == "__main__":
+    train_vali_dict()
