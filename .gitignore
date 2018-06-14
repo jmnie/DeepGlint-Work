@@ -6,7 +6,7 @@
 /venv
 /.vscode
 /.idea
-
+/.pytest_cache
 
 *.aux
 *.out
@@ -21,3 +21,6 @@
 *.lst
 *.rec
 *.idx
+*.toc
+*.tar.gz
+*.ps

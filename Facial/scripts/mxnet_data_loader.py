@@ -159,21 +159,49 @@ def mxnet_makelst(mapping_dir,data_dir,out_path):
     write_list(path_out_test,test_list)
     write_list(path_out_vali,vali_list)
 
+def fer2013_make_dataset():
+    train_path = '/media/jiaming/Seagate Backup Plus Drive/fer2013/train/'
+    test_path = '/media/jiaming/Seagate Backup Plus Drive/fer2013/test/'
+    vali_path = '/media/jiaming/Seagate Backup Plus Drive/fer2013/val/'
+    path_out = '/media/jiaming/Seagate Backup Plus Drive/fer2013/mxnet_file/'
+    
+    def makelst(data_path,path_out):
+        dirs = os.listdir(data_path)
+        i = 0
+        result = []
+        for subdir in dirs:
+            subdirpath = os.path.join(data_path,subdir)
+            for file in os.listdir(subdirpath):
+                line = []
+                line.append(i)
+                #line.append(int(subdir))
+                line.append(os.path.join(subdir,file))
+                line.append(int(subdir))
+                result.append(line)
+                i = i + 1
+        write_list(path_out,result)
+    
+    makelst(train_path,path_out + 'train.lst')
+    makelst(test_path,path_out + 'test.lst')
+    makelst(vali_path,path_out + 'vali.lst')
+
+
 if __name__ == "__main__":
+    fer2013_make_dataset()
     # mapping_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224_mapping/basic_emotion/'
     # data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224crop_1/'
     # path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
     # mapping_file(data_dir,mapping_dir)
     # mxnet_makelst(mapping_dir,data_dir,path_out)
 
-    data_iter = mx.io.ImageRecordIter(
-                path_imgrec = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.rec", # The target record file.
-                path_imgidx = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.idx",
-                data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
-                batch_size=4, # Number of items per batch.
-                #resize=256, # Resize the shorter edge to 256 before cropping.
-                #rand_crop = Tru,
-    )
+    # data_iter = mx.io.ImageRecordIter(
+    #             path_imgrec = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.rec", # The target record file.
+    #             path_imgidx = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.idx",
+    #             data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
+    #             batch_size=4, # Number of items per batch.
+    #             #resize=256, # Resize the shorter edge to 256 before cropping.
+    #             #rand_crop = Tru,
+    # )
     # # You can now use the data_iter to access batches of images.
     # batch = data_iter.next() # first batch.
     # images = batch.data[0] # This will contain 4 (=batch_size) images each of 3x227x227.
@@ -184,6 +212,6 @@ if __name__ == "__main__":
 
     # print(images.shape)
     # print(label.shape)
-    for batch in data_iter:
-        break
-    print(batch.data[0])
+    # for batch in data_iter:
+    #     break
+    # print(batch.data[0])
