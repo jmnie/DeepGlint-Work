@@ -8,55 +8,62 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: MyRefs.bib
-I was expecting a `,' or a `}'---line 12 of file MyRefs.bib
+Warning--string name "october" is undefined
+--line 5 of file MyRefs.bib
+Repeated entry---line 23 of file MyRefs.bib
+ : @booklet{ref:en1
+ :                 ,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 38 of file MyRefs.bib
  :  
- :  Month = February,
+ :  Month = March,
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--empty title in ref:emotionnet
 
 Done.
-You've used 1 entry,
+You've used 3 entries,
             4087 wiz_defined-function locations,
-            827 strings with 7430 characters,
-and the built_in function-call counts, 431 in all, are:
-= -- 28
-> -- 4
+            834 strings with 7811 characters,
+and the built_in function-call counts, 1016 in all, are:
+= -- 73
+> -- 12
 < -- 0
-+ -- 2
-- -- 1
-* -- 29
-:= -- 95
-add.period$ -- 2
-call.type$ -- 1
-change.case$ -- 1
++ -- 6
+- -- 3
+* -- 45
+:= -- 207
+add.period$ -- 5
+call.type$ -- 3
+change.case$ -- 2
 chr.to.int$ -- 0
-cite$ -- 1
-duplicate$ -- 29
-empty$ -- 29
-format.name$ -- 1
-if$ -- 73
+cite$ -- 4
+duplicate$ -- 84
+empty$ -- 82
+format.name$ -- 3
+if$ -- 199
 int.to.chr$ -- 0
-int.to.str$ -- 1
-missing$ -- 7
-newline$ -- 26
-num.names$ -- 1
-pop$ -- 14
+int.to.str$ -- 3
+missing$ -- 21
+newline$ -- 32
+num.names$ -- 3
+pop$ -- 45
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 26
+skip$ -- 72
 stack$ -- 0
-substring$ -- 1
-swap$ -- 17
+substring$ -- 2
+swap$ -- 47
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 1
-warning$ -- 0
-while$ -- 1
-width$ -- 2
-write$ -- 30
-(There was 1 error message)
+type$ -- 3
+warning$ -- 1
+while$ -- 3
+width$ -- 4
+write$ -- 44
+(There were 2 error messages)

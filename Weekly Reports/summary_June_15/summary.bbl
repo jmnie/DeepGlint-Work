@@ -21,8 +21,19 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{ref:1SLAM}
-{S. Thrun and J. J. Leonard}, ``Simultaneous localization and mapping in
-  \textit{Mobile and Distributed Robotics},'' 37:871-889, 2007.
+\bibitem{ref:affnet}
+{A. Mollahosseini, B. Hasani and M. H. Mahoor}, ``Affectnet: A database for
+  facial expression, valence, and arousal computing in the wild,''
+  \url{https://arxiv.org/pdf/1708.03985.pdf}, 2007.
+
+\bibitem{ref:emotionnet}
+{EmotionNet },
+  \url{http://cbcsl.ece.ohio-state.edu/EmotionNetChallenge/index.html#overview}.
+
+\bibitem{ref:en1}
+{C. F. Benitez-Quiroz, R. Srinivasan, A. M. Martinez }, ``Emotionet: An
+  accurate, real-time algorithm for the automatic annotation of a million
+  facial expressions in the wild,''
+  \url{http://cbcsl.ece.ohio-state.edu/cvpr16.pdf}, 2016.
 
 \end{thebibliography}

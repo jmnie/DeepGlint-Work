@@ -135,7 +135,7 @@ def Training():
                     batch_size = batch_size, # Number of items per batch.
                     rand_crop = False,
                     shuffle = False,
-                    Amean_r = 128,
+                    mean_r = 128,
                     mean_g = 128,
                     mean_b = 128,
                     std_r = 256,

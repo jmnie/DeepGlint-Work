@@ -2,7 +2,7 @@ import json
 import numpy as np
 import os 
 from sklearn.model_selection import train_test_split
-import mxnet as mx
+#import mxnet as mx
 
 def mapping_file(dataset_path,map_path):
     
@@ -185,33 +185,19 @@ def fer2013_make_dataset():
     makelst(test_path,path_out + 'test.lst')
     makelst(vali_path,path_out + 'vali.lst')
 
+def cal(array):
+    sum = np.sum(array)
+    for ele in array:
+        print(ele/sum)
 
 if __name__ == "__main__":
-    fer2013_make_dataset()
+    
+    #fer2013_make_dataset()
     # mapping_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224_mapping/basic_emotion/'
     # data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224crop_1/'
     # path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
     # mapping_file(data_dir,mapping_dir)
     # mxnet_makelst(mapping_dir,data_dir,path_out)
-
-    # data_iter = mx.io.ImageRecordIter(
-    #             path_imgrec = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.rec", # The target record file.
-    #             path_imgidx = "/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/test.idx",
-    #             data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
-    #             batch_size=4, # Number of items per batch.
-    #             #resize=256, # Resize the shorter edge to 256 before cropping.
-    #             #rand_crop = Tru,
-    # )
-    # # You can now use the data_iter to access batches of images.
-    # batch = data_iter.next() # first batch.
-    # images = batch.data[0] # This will contain 4 (=batch_size) images each of 3x227x227.
-    # # process the images
-    # label = batch.label[0]
-
-    # data_iter.reset() # To restart the iterator from the beginning.
-
-    # print(images.shape)
-    # print(label.shape)
-    # for batch in data_iter:
-    #     break
-    # print(batch.data[0])
+    array = np.array([23,   23,    2,    1 ,   0 ,   1 ,   2 ,   1])
+    cal(array)
+    

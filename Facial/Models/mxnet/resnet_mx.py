@@ -7,21 +7,22 @@ mx.random.seed(1)
 from mxnet.gluon.model_zoo import vision
 
 def getNetwork(nb_class):
-    resnet_ = vision.resnet34_v2(pretrained=False,classes=nb_class)
+    resnet_ = vision.resnet18_v2(pretrained=False,classes=nb_class)
     #resnet_18.collect_params().initialize(mx.init.Xavier(magnitude=0.5), ctx=ctx)
     return resnet_
 
 ctx = mx.cpu()
 
 batch_size = 16
-CHANNEL = 3
-SIZE = 224
-EPOCH = 5
-num_outputs = 8
+CHANNEL = 1
+SIZE = 48
+EPOCH = 2
+num_outputs = 7
 std = 255
 mean = 127.5
 
-path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
+#path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
+path_out = '/media/jiaming/Seagate Backup Plus Drive/fer2013/mxnet_file/'
 # data_dir = '/train/trainset/1/Manually_Annotated_Images/'
 # mean_array = nd.array([mean,mean,mean])
 # std_array = nd.array([std,std,std])
@@ -41,12 +42,18 @@ train_iter = mx.io.ImageRecordIter(
                 path_imgidx = path_out + 'test.idx',
                 preprocess_threads = 5,
                 #aug_seq = aug_list,
-                data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
+                data_shape=(CHANNEL, SIZE, SIZE), # Output data shape; 227x227 region will be cropped from the original image.
                 batch_size=batch_size, # Number of items per batch.
-                resize=256, # Resize the shorter edge to 256 before cropping.
+                #resize=256, # Resize the shorter edge to 256 before cropping.
                 rand_crop = True,
                 shuffle = True,
-                scale = 0.00392,
+                #scale = 0.00392,
+                mean_r = 128,
+                mean_g = 128,
+                mean_b = 128,
+                std_r = 256,
+                std_g = 256,
+                std_b = 256,
                 random_mirror = True,
     )
 
@@ -54,16 +61,22 @@ vali_iter = mx.io.ImageRecordIter(
                 path_imgrec = path_out + 'vali.rec', # The target record file.
                 path_imgidx = path_out + 'vali.idx',
                 preprocess_threads = 5,
-                data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
+                data_shape=(CHANNEL, SIZE, SIZE), # Output data shape; 227x227 region will be cropped from the original image.
                 batch_size = batch_size, # Number of items per batch.
                 rand_crop = True,
                 shuffle = False,
-                scale = 0.00392)
+                mean_r = 128,
+                mean_g = 128,
+                mean_b = 128,
+                std_r = 256,
+                std_g = 256,
+                std_b = 256)
+                #scale = 0.00392)
 
 for i, batch in enumerate(train_iter):
     break
     #print(batch.data[0])
-print(batch.data[0])
+print(batch.data[0].shape)
 
 net = getNetwork(8)
 net.collect_params().initialize(mx.init.Xavier(magnitude=1), ctx=ctx)
@@ -71,8 +84,10 @@ softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
 trainer = gluon.Trainer(net.collect_params(), 'adam', {'learning_rate': .1})
 
 def evaluate_accuracy(data_iterator, net):
+
     data_iterator.reset()
     acc = mx.metric.Accuracy()
+    acc.reset()
     for i, batch in enumerate(data_iterator):
         data = batch.data[0].as_in_context(ctx)
         label = batch.label[0].as_in_context(ctx)
@@ -83,7 +98,7 @@ def evaluate_accuracy(data_iterator, net):
 
 def vali_loss_cal(data_iter,net):
     data_iter.reset()
-    #moving_loss = 0
+    moving_loss = 0
     smoothing_constant = .01
     for i, batch in enumerate(train_iter):
         #print(data.shape)
@@ -93,9 +108,7 @@ def vali_loss_cal(data_iter,net):
         with autograd.record():
             output = net(data)
             loss = softmax_cross_entropy(output, label)
-        loss.backward()
-        trainer.step(data.shape[0])
-        
+
         ##########################
         #  Keep a moving average of the losses
         ##########################
@@ -116,6 +129,7 @@ vali_loss_res = []
 for e in range(epochs):
     #train_iter.reset()
     train_iter.reset()
+    moving_loss = 0
     for i, batch in enumerate(train_iter):
         #print(data.shape)
         #print(label.shape)
