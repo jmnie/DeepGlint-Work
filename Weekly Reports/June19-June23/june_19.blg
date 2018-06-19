@@ -1,6 +1,6 @@
 This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
 Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
-The top-level auxiliary file: summary.aux
+The top-level auxiliary file: june_19.aux
 The style file: IEEEtran.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
@@ -8,12 +8,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: MyRefs.bib
-Warning--string name "october" is undefined
---line 5 of file MyRefs.bib
-Repeated entry---line 23 of file MyRefs.bib
- : @booklet{ref:en1
- :                 ,
-I'm skipping whatever remains of this entry
 I was expecting a `,' or a `}'---line 38 of file MyRefs.bib
  :  
  :  Month = March,
@@ -22,48 +16,47 @@ I'm skipping whatever remains of this entry
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
-Warning--empty title in ref:emotionnet
 
 Done.
-You've used 4 entries,
+You've used 1 entry,
             4087 wiz_defined-function locations,
-            838 strings with 8003 characters,
-and the built_in function-call counts, 1312 in all, are:
-= -- 96
-> -- 16
+            826 strings with 7417 characters,
+and the built_in function-call counts, 436 in all, are:
+= -- 28
+> -- 4
 < -- 0
-+ -- 8
-- -- 4
-* -- 53
-:= -- 264
-add.period$ -- 7
-call.type$ -- 4
-change.case$ -- 3
++ -- 2
+- -- 1
+* -- 30
+:= -- 95
+add.period$ -- 2
+call.type$ -- 1
+change.case$ -- 1
 chr.to.int$ -- 0
-cite$ -- 5
-duplicate$ -- 112
-empty$ -- 109
-format.name$ -- 4
-if$ -- 263
+cite$ -- 1
+duplicate$ -- 30
+empty$ -- 30
+format.name$ -- 1
+if$ -- 74
 int.to.chr$ -- 0
-int.to.str$ -- 4
-missing$ -- 28
-newline$ -- 35
-num.names$ -- 4
-pop$ -- 61
+int.to.str$ -- 1
+missing$ -- 7
+newline$ -- 26
+num.names$ -- 1
+pop$ -- 13
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 94
+skip$ -- 25
 stack$ -- 0
-substring$ -- 3
-swap$ -- 62
+substring$ -- 1
+swap$ -- 20
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 4
-warning$ -- 1
-while$ -- 4
-width$ -- 5
-write$ -- 51
-(There were 2 error messages)
+type$ -- 1
+warning$ -- 0
+while$ -- 1
+width$ -- 2
+write$ -- 30
+(There was 1 error message)

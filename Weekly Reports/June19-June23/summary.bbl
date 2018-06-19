@@ -26,11 +26,6 @@
   facial expression, valence, and arousal computing in the wild,''
   \url{https://arxiv.org/pdf/1708.03985.pdf}, 2007.
 
-\bibitem{ref:sight}
-{A. Dehghan, E. G. Ortiz, G. Shu, S. Z. Masood}, ``Dager: Deep age, gender and
-  emotion recognition using convolutional neural networks,'' Computer Vision
-  Lab, Sighthound Inc., Winter Park, FL.
-
 \bibitem{ref:emotionnet}
 {EmotionNet },
   \url{http://cbcsl.ece.ohio-state.edu/EmotionNetChallenge/index.html#overview}.

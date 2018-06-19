@@ -188,8 +188,9 @@ def fer2013_make_dataset():
 def cal(array):
     sum = np.sum(array)
     for ele in array:
-        print(ele/sum)
-
+        print(" %.3f" % (ele/sum)," &",end=" ")
+        #print("&",end = " ")
+    print("")
 if __name__ == "__main__":
     
     #fer2013_make_dataset()
@@ -198,6 +199,7 @@ if __name__ == "__main__":
     # path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
     # mapping_file(data_dir,mapping_dir)
     # mxnet_makelst(mapping_dir,data_dir,path_out)
-    array = np.array([23,   23,    2,    1 ,   0 ,   1 ,   2 ,   1])
+    array = np.array([398,  43,  22,  18,   3,   0 , 13])
     cal(array)
+    
     

@@ -21,24 +21,8 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{ref:affnet}
-{A. Mollahosseini, B. Hasani and M. H. Mahoor}, ``Affectnet: A database for
-  facial expression, valence, and arousal computing in the wild,''
-  \url{https://arxiv.org/pdf/1708.03985.pdf}, 2007.
-
-\bibitem{ref:sight}
-{A. Dehghan, E. G. Ortiz, G. Shu, S. Z. Masood}, ``Dager: Deep age, gender and
-  emotion recognition using convolutional neural networks,'' Computer Vision
-  Lab, Sighthound Inc., Winter Park, FL.
-
-\bibitem{ref:emotionnet}
-{EmotionNet },
-  \url{http://cbcsl.ece.ohio-state.edu/EmotionNetChallenge/index.html#overview}.
-
-\bibitem{ref:en1}
-{C. F. Benitez-Quiroz, R. Srinivasan, A. M. Martinez }, ``Emotionet: An
-  accurate, real-time algorithm for the automatic annotation of a million
-  facial expressions in the wild,''
-  \url{http://cbcsl.ece.ohio-state.edu/cvpr16.pdf}, 2016.
+\bibitem{ref:affcvpr}
+A.~M. et~al, ``Facial expression recognition from world wild web,''
+  \url{https://arxiv.org/pdf/1605.03639.pdf}, May 2016.
 
 \end{thebibliography}

@@ -46,6 +46,8 @@ def read_csv(train_path):
     face_height = header.index("face_height")
     facial_landmarks = header.index("facial_landmarks")
     expression = header.index("expression")
+    valence = header.index("valence")
+    arousal = header.index("arousal")
     useless_label = [7,8,9,10]
 
     def getLandMark(landmarks):
@@ -99,6 +101,8 @@ def read_csv(train_path):
         _height = int(row[face_height])
         landmark = getLandMark(row[facial_landmarks])
         label = int(row[expression])
+        val = float(row[valence])
+        aro = float(row[arousal])
 
 
         #print("File Dir ",filedir)
@@ -111,7 +115,7 @@ def read_csv(train_path):
         #print(file_name)
 
         #temp_value = [_x,_y,_width,_height,landmark,label,filedir]
-        temp_value = [label,LABELS[label]]
+        temp_value = [label,LABELS[label],[val,aro]]
         file_dict[filedir] = temp_value
         #print("i :",i,filedir)
 
@@ -184,9 +188,16 @@ if __name__ == '__main__':
 
     train_dict = read_csv(train_path)
     vali_dict = read_csv(vali_path)
-    combine_dict = {**train_dict,**vali_dict}
 
-    with open('affect_dict.json','w') as fp:
-        json.dump(combine_dict,fp)
+    with open('/media/jiaming/Seagate Backup Plus Drive/AffectNet/ini_mapping/train.json','w') as fp:
+        json.dump(train_dict,fp)
+    
+    with open('/media/jiaming/Seagate Backup Plus Drive/AffectNet/ini_mapping/vali.json','w') as fp:
+        json.dump(vali_dict,fp)
+        
+    #combine_dict = {**train_dict,**vali_dict}
+
+    #with open('affect_dict.json','w') as fp:
+    #    json.dump(combine_dict,fp)
     
     
