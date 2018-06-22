@@ -1,125 +1,101 @@
-from __future__ import print_function
 import mxnet as mx
-from mxnet import nd, autograd
-from mxnet import gluon
 import numpy as np
-from mxnet.gluon.model_zoo import vision as models
-from mxnet import init
 
-def normalization(data):
-    data = data * (1. / 255) - 0.5
-    return data
-
-mx.random.seed(1)
-
-ctx = mx.cpu()
-batch_size = 1
-channel = 3
-size = 224
-epoch = 5
-
-path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
-data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/aligned_final/'
-
-train_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(channel, size, size), label_width=1,
-                                   path_imglist=path_out+'test.lst',path_root=data_dir)
-
-test_iter = mx.image.ImageIter(batch_size = batch_size, data_shape=(channel, size, size), label_width=1,
-                                path_imglist=path_out+'vali.lst',path_root=data_dir)
-
-alex_net = gluon.nn.Sequential()
-
-with alex_net.name_scope():
-    #  First convolutional layer
-    alex_net.add(gluon.nn.Conv2D(channels=96, kernel_size=11, strides=(4,4), activation='relu'))
-    alex_net.add(gluon.nn.MaxPool2D(pool_size=3, strides=2))    
-    #  Second convolutional layer
-    alex_net.add(gluon.nn.Conv2D(channels=192, kernel_size=5, activation='relu'))
-    alex_net.add(gluon.nn.MaxPool2D(pool_size=3, strides=(2,2)))            
-    # Third convolutional layer
-    alex_net.add(gluon.nn.Conv2D(channels=384, kernel_size=3, activation='relu'))
-    # Fourth convolutional layer
-    alex_net.add(gluon.nn.Conv2D(channels=384, kernel_size=3, activation='relu')) 
-    # Fifth convolutional layer
-    alex_net.add(gluon.nn.Conv2D(channels=256, kernel_size=3, activation='relu'))
-    alex_net.add(gluon.nn.MaxPool2D(pool_size=3, strides=2))    
-    # Flatten and apply fullly connected layers
-    alex_net.add(gluon.nn.Flatten())
-    alex_net.add(gluon.nn.Dense(4096, activation="relu"))
-    alex_net.add(gluon.nn.Dense(4096, activation="relu"))
-    alex_net.add(gluon.nn.Flatten())
-    alex_net.add(gluon.nn.Dense(8))
-
-alex_net.collect_params().initialize(mx.init.Xavier(magnitude=2.24), ctx=ctx)
-trainer = gluon.Trainer(alex_net.collect_params(), 'sgd', {'learning_rate': .1})
-softmax_cross_entropy = gluon.loss.SoftmaxCrossEntropyLoss()
-
-# pretrained_net = models.resnet18_v2(pretrained=True)
-# finetune_net = models.resnet18_v2(classes=8)
-# finetune_net.features = pretrained_net.features
-# finetune_net.output.initialize(init.Xavier())
-
-
-
-def evaluate_accuracy(data_iterator, net):
-    acc = mx.metric.Accuracy()    
-    #acc = 0
-    for data_ in data_iterator:
-        image = normalization(data_.data[0]).as_in_context(ctx)
-        label = normalization(data_.label[0]).as_in_context(ctx)
-        output = net(image)
-        predictions = nd.argmax(output, axis=1)
-        #print("Label ",label)
-        #print("Predict ",predictions)
-        acc.update(preds=predictions,labels=label)
-        #print("Accuracy :",acc.get()[1])
-
-    #print("Overall Acc:",temp_acc/i)
-    return acc.get()[1]
-
-# def normalization(data):
-#     data = data * (1. / 255) - 0.5
-#     return data
-
-epochs = 3
-smoothing_constant = .01
-
-moving_loss  = 0
-print(alex_net)
-
-train_accuracy = evaluate_accuracy(train_iter,alex_net)
-print("Train Accuracy",train_accuracy)
-
-for e in range(epochs):
-
-    train_loss = 0.
-    train_acc = 0.
-
-    i = 0
-    for data_ in train_iter:
-        data = normalization(data_.data[0])
-        label = normalization(data_.label[0])
-
-        with autograd.record():
-            output = alex_net(data)
-            loss = softmax_cross_entropy(output, label)
+def get_symbol(num_classes, dtype='float32', **kwargs):
+    
+    input_data = mx.sym.Variable(name="data")
+    if dtype == 'float16':
+        input_data = mx.sym.Cast(data=input_data, dtype=np.float16)
         
-        for l in loss:
-            l.backward()
-        #loss.backward()
-        trainer.step(batch_size)
+    # stage 1
+    conv1 = mx.sym.Convolution(name='conv1',
+        data=input_data, kernel=(11, 11), stride=(4, 4), num_filter=96)
+    relu1 = mx.sym.Activation(data=conv1, act_type="relu")
+    lrn1 = mx.sym.LRN(data=relu1, alpha=0.0001, beta=0.75, knorm=2, nsize=5)
+    pool1 = mx.sym.Pooling(
+        data=lrn1, pool_type="max", kernel=(3, 3), stride=(2,2))
+    
+    # stage 2
+    conv2 = mx.sym.Convolution(name='conv2',
+        data=pool1, kernel=(5, 5), pad=(2, 2), num_filter=256)
+    relu2 = mx.sym.Activation(data=conv2, act_type="relu")
+    lrn2 = mx.sym.LRN(data=relu2, alpha=0.0001, beta=0.75, knorm=2, nsize=5)
+    pool2 = mx.sym.Pooling(data=lrn2, kernel=(3, 3), stride=(2, 2), pool_type="max")
+    
+    # stage 3
+    conv3 = mx.sym.Convolution(name='conv3',
+        data=pool2, kernel=(3, 3), pad=(1, 1), num_filter=384)
+    relu3 = mx.sym.Activation(data=conv3, act_type="relu")
+    conv4 = mx.sym.Convolution(name='conv4',
+        data=relu3, kernel=(3, 3), pad=(1, 1), num_filter=384)
+    relu4 = mx.sym.Activation(data=conv4, act_type="relu")
+    conv5 = mx.sym.Convolution(name='conv5',
+        data=relu4, kernel=(3, 3), pad=(1, 1), num_filter=256)
+    relu5 = mx.sym.Activation(data=conv5, act_type="relu")
+    pool3 = mx.sym.Pooling(data=relu5, kernel=(3, 3), stride=(2, 2), pool_type="max")
+    
+    # stage 4
+    flatten = mx.sym.Flatten(data=pool3)
+    fc1 = mx.sym.FullyConnected(name='fc1', data=flatten, num_hidden=4096)
+    relu6 = mx.sym.Activation(data=fc1, act_type="relu")
+    dropout1 = mx.sym.Dropout(data=relu6, p=0.5)
+    
+    # stage 5
+    fc2 = mx.sym.FullyConnected(name='fc2', data=dropout1, num_hidden=4096)
+    relu7 = mx.sym.Activation(data=fc2, act_type="relu")
+    dropout2 = mx.sym.Dropout(data=relu7, p=0.5)
+    
+    # stage 6
+    fc3 = mx.sym.FullyConnected(name='fc3', data=dropout2, num_hidden=num_classes)
+    if dtype == 'float16':
+        fc3 = mx.sym.Cast(data=fc3, dtype=np.float32)
+    
+    y1 = mx.symbol.Variable('lin_reg_label')
+    y2 = mx.symbol.Variable('lin_reg_label')
+    lro1 = mx.sym.LinearRegressionOutput(data=fc3,label=y1, name="lro1")
+    lro2 = mx.sym.LinearRegressionOutput(data=fc3,label=y2, name="lro2")
+    return lro1, lro2
+    #softmax = mx.sym.SoftmaxOutput(data=fc3, name='softmax')
+    #return softmax
 
-        curr_loss = nd.mean(loss).asscalar()
-        print("curr_loss",curr_loss)
-        moving_loss = (curr_loss if ((i == 0) and (e == 0)) 
-                       else (1 - smoothing_constant) * moving_loss + (smoothing_constant) * curr_loss)
-        i = i + 1   
-        print("i :",i)
-        print("Loss :",moving_loss)
-        #train_accuracy += evaluate_accuracy(tr)
-        #print("Output ",output)
-        #print("Label ",label)
-        
-    train_acc = evaluate_accuracy(train_iter,alex_net)
-    test_acc = evaluate_accuracy(test_iter, alex_net)
-    print("Epoch %s. Loss: %s, Train_acc %s, Test_acc %s" % (e, moving_loss, train_acc, test_acc))    
+def regression_training():
+    nb_class = 7
+    EPOCH = 1
+    CHANNEL = 3
+    SIZE = 224
+    batch_size = 8
+    lr = 0.001
+    print("Training Regression")
+    #lro1,lro2 = get_symbol(nb_class)
+    
+    path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
+    
+    train_iter = mx.io.ImageRecordIter(                
+                    path_imgrec = path_out + 'train_regression.rec', # The target record file.
+                    path_imgidx = path_out + 'train_regression.idx',
+                    preprocess_threads = 15,
+                    #aug_seq = aug_seq,
+                    data_shape=(3, 224, 224), # Output data shape; 227x227 region will be cropped from the original image.
+                    batch_size=batch_size, # Number of items per batch.
+                    resize=224, # Resize the shorter edge to 256 before cropping.
+                    rand_crop = False,
+                    shuffle = True,
+                    mean_r = 128,
+                    mean_g = 128,
+                    mean_b = 128,
+                    std_r = 256,
+                    std_g = 256,
+                    std_b = 256,
+                    label_width = 2,
+                    random_mirror = False
+        )
+
+    train_iter.reset()
+    
+    for batch in train_iter:
+        break
+    print(batch.label)
+
+
+if __name__ == "__main__":
+    regression_training()

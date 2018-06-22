@@ -152,9 +152,45 @@ def distributed_dataset():
 
     print("Make Distributed Dataset Completed ")
 
+def analysis():
+    train_csv = "/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/training.csv"
+    vali_csv = "/media/jiaming/Seagate Backup Plus Drive/AffectNet/Manually_Annotated_file_lists/validation.csv"
+
+    train_dict = read_csv(train_csv)
+    vali_dict = read_csv(vali_csv)
+
+    train_number = [0]*11
+    vali_number = [0]*11
+
+    for key in train_dict:
+        train_number[train_dict[key][0]] += 1
+    
+    for key in vali_dict:
+        vali_number[vali_dict[key][0]] += 1
+    
+    for i in range(3):
+        del train_number[-1]
+        del vali_number[-1]
+        
+    sum_train = np.sum(np.array(train_number))
+    sum_vali = np.sum(np.array(vali_number))
+    
+    print("Train number: ",train_number)
+    print("Vali Number: ",vali_number)
+
+    for i in range(len(train_number)):
+        train_number[i] = (train_number[i] / sum_train)*100
+        vali_number[i] = (vali_number[i] / sum_vali)*100
+
+    print("Train Percentage: ",train_number)
+    print("Vali Percentage: ", vali_number)
+    
+    
+
 # Test
 # #dataset_script()
 # test_array = np.array([])
+
 # t2 = np.ones((2,2))
 #
 # test_array = t2
@@ -166,4 +202,5 @@ def distributed_dataset():
 #dataset_script()
 
 if __name__ == "__main__":
-    train_vali_dict()
+
+    analysis()

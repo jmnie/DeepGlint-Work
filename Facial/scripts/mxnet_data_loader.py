@@ -95,6 +95,16 @@ def write_list(path_out, image_list):
             line += '%s\n' % item[1]
             fout.write(line)
 
+def write_list_multi(path_out, image_list):
+    with open(path_out, 'w') as fout:
+        for i, item in enumerate(image_list):
+            #print("i:",i,"item:",item)
+            line = '%d\t' % item[0]
+            for j in item[2:]:
+               line += '%f\t' % j
+            line += '%s\n' % item[1]
+            fout.write(line)
+
 def mxnet_makelst(mapping_dir,data_dir,out_path):
     x_train_path = mapping_dir + '/x_train.json'
     x_test_path = mapping_dir + '/x_test.json'
@@ -159,6 +169,53 @@ def mxnet_makelst(mapping_dir,data_dir,out_path):
     write_list(path_out_test,test_list)
     write_list(path_out_vali,vali_list)
 
+def mxnet_makelst_2(mapping_dir,data_dir,out_path):
+    train_dict_path = mapping_dir + 'train.json'
+    vali_dict_path = mapping_dir + 'vali.json'
+
+    with open(train_dict_path,'r') as fp:
+        train_dict = json.load(fp)
+    
+    with open(vali_dict_path,'r') as fp:
+        vali_dict = json.load(fp)
+    
+    train_list = []
+    vali_list = []
+
+    subdirs = os.listdir(data_dir)
+    i = 0
+    j = 0
+    for dir in subdirs:
+        path = os.path.join(data_dir,dir)
+        
+        for file in os.listdir(path):
+            key = str(dir + '/' + file)
+            if key in train_dict:
+                line = []
+                line.append(i)
+                line.append(key)
+                line.append(train_dict[key][2][0])
+                line.append(train_dict[key][2][1])
+                train_list.append(line)
+                i = i + 1 
+            elif key in vali_dict:
+                line = []
+                line.append(j)
+                line.append(key)
+                line.append(vali_dict[key][2][0])
+                line.append(vali_dict[key][2][1])
+                vali_list.append(line)
+                j = j + 1 
+            else:
+                continue
+
+    path_out_train = out_path + 'train_regression.lst'
+    path_out_vali = out_path + 'vali_regression.lst'
+
+    write_list(path_out_train,train_list)
+    write_list(path_out_vali,vali_list)
+
+
 def fer2013_make_dataset():
     train_path = '/media/jiaming/Seagate Backup Plus Drive/fer2013/train/'
     test_path = '/media/jiaming/Seagate Backup Plus Drive/fer2013/test/'
@@ -194,11 +251,11 @@ def cal(array):
 if __name__ == "__main__":
     
     #fer2013_make_dataset()
-    # mapping_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224_mapping/basic_emotion/'
-    # data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224crop_1/'
-    # path_out = '/home/jiaming/code/github/DeepGlint-Work/Facial/scripts/rec_file/'
-    # mapping_file(data_dir,mapping_dir)
-    # mxnet_makelst(mapping_dir,data_dir,path_out)
+    mapping_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/ini_mapping/'
+    data_dir = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/224crop_1/'
+    path_out = '/media/jiaming/Seagate Backup Plus Drive/AffectNet/Processed/mxnet_list/'
+    #mapping_file(data_dir,mapping_dir)
+    mxnet_makelst_2(mapping_dir,data_dir,path_out)
     array = np.array([398,  43,  22,  18,   3,   0 , 13])
     cal(array)
     
